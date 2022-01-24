@@ -2,7 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 using Android.OS;
-using Android.Widget;
+using Android.Views;
 using AndroidX.AppCompat.App;
 using Xamarin.Essentials;
 
@@ -11,29 +11,37 @@ namespace KLauncher
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
     [IntentFilter(new[] { "android.intent.action.MAIN" }, Categories = new[] { "android.intent.category.HOME", "android.intent.category.DEFAULT", "android.intent.category.LAUNCHER" })]
-    public class MainActivity : AppCompatActivity
+    public sealed class MainActivity : AppCompatActivity
     {
-        private ListView AppList { get; set; }
         private PackageReceiver PackageReceiver { get; set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
-
-            AppList = FindViewById<ListView>(Resource.Id.appList);
-            InitViewStyle();
         }
-        private void InitViewStyle()
+        public override bool DispatchKeyEvent(KeyEvent e)
         {
-            int marginTop = 0, marginBottom = 0;
-            int resourceId = ApplicationContext.Resources.GetIdentifier("status_bar_height", "dimen", "android");
-            if (resourceId > 0)
-                marginTop = ApplicationContext.Resources.GetDimensionPixelSize(resourceId);
-            resourceId = ApplicationContext.Resources.GetIdentifier("navigation_bar_height", "dimen", "android");
-            if (resourceId > 0)
-                marginBottom = ApplicationContext.Resources.GetDimensionPixelSize(resourceId);
-            AppList.SetPadding(0, marginTop, 0, marginBottom);
+            switch (e.KeyCode)
+            {
+                case Keycode.PageUp:
+                    {
+
+                        break;
+                    }
+                case Keycode.PageDown:
+                    {
+
+                        break;
+                    }
+                case Keycode.Enter:
+                    {
+                        Intent intent = new Intent(this, typeof(AppActivity));
+                        StartActivity(intent);
+                        break;
+                    }
+            }
+            return base.DispatchKeyEvent(e);
         }
         protected override void OnStart()
         {
