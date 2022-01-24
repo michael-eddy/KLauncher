@@ -4,6 +4,7 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using AndroidX.AppCompat.App;
+using KLauncher.Libs;
 using Xamarin.Essentials;
 
 namespace KLauncher
@@ -19,6 +20,7 @@ namespace KLauncher
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+            AppCenter.Instance.UpdateList();
         }
         public override bool DispatchKeyEvent(KeyEvent e)
         {

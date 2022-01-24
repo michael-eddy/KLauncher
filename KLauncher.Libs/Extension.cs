@@ -8,11 +8,67 @@ using Android.Widget;
 using Android.OS;
 using FFImageLoading;
 using FFImageLoading.Cache;
+using System.Linq;
 
 namespace KLauncher.Libs
 {
     public static class Extension
     {
+        public static bool OpenApp(this Context context, string packageName)
+        {
+            try
+            {
+                PackageManager manager = context.PackageManager;
+                Intent intent = new Intent(Intent.ActionMain);
+                intent.AddCategory(Intent.CategoryLauncher);
+                intent.SetPackage(packageName);
+                var apps = manager.QueryIntentActivities(intent, 0);
+                if (apps.Count > 0)
+                {
+                    ResolveInfo ri = apps.FirstOrDefault();
+                    string className = ri.ActivityInfo.Name;
+                    if (className.Split('.').Length > 2)
+                    {
+                        ComponentName cn = new ComponentName(packageName, className);
+                        intent.SetComponent(cn);
+                        context.StartActivity(intent);
+                    }
+                    else
+                    {
+                        intent = manager.GetLaunchIntentForPackage(packageName);
+                        if (intent != null)
+                            context.StartActivity(intent);
+                    }
+                }
+                return true;
+            }
+            catch { }
+            return false;
+        }
+        public static int ToInt32(this object token)
+        {
+            if (token == null)
+                return -1;
+            var str = token.ToString();
+            try
+            {
+                if (int.TryParse(str, out int result))
+                    return result;
+                else
+                    return Convert.ToInt32(str);
+            }
+            catch
+            {
+                try
+                {
+                    return Convert.ToInt32(str.Split('.')[0]);
+                }
+                catch
+                {
+                    return -1;
+                }
+            }
+        }
         public static async void LoadImage(this ImageView imageView, string base64Code)
         {
             try

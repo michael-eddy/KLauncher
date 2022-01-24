@@ -60,7 +60,7 @@ namespace KLauncher.Libs
                                 app.Icon = drawable;
                                 app.VersionCode = versionCode;
                                 app.DisplayName = displayName;
-                                Save(app);
+                                SaveAsync(app);
                             }
                         }
                         else
@@ -75,27 +75,13 @@ namespace KLauncher.Libs
                                 IsSystem = packageInfo.ApplicationInfo.IsSystem()
                             };
                             Apps.Add(app);
-                            Save(app);
+                            SaveAsync(app);
                         }
                     }
+                    AppUpdate?.Invoke(this);
                 }
                 IsComplete = true;
             });
-        }
-        private void Save(AppItem app)
-        {
-            var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
-            if (appItem != null)
-            {
-                appItem.Icon = app.Icon;
-                appItem.IsSystem = app.IsSystem;
-                appItem.IsVisable = app.IsVisable;
-                appItem.VersionCode = app.VersionCode;
-                appItem.DisplayName = app.DisplayName;
-                DB.Connection.Update(appItem);
-            }
-            else
-                DB.Connection.Insert(app);
         }
         private void Remove(string packageName)
         {

@@ -33,9 +33,9 @@ namespace KLauncher.Adapters
                     DisplayIcon = convertView.FindViewById<ImageView>(Resource.Id.displayIcon),
                     DisplayName = convertView.FindViewById<TextView>(Resource.Id.displayName)
                 };
-                convertView.Click += (s, ee) =>
+                convertView.Click += (_, _) =>
                 {
-                    ItemClick?.Invoke(itemHolder);
+                    ItemClick?.Invoke(position);
                 };
                 convertView.Tag = itemHolder;
             }
