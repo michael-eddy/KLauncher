@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KLauncher", "KLauncher\KLauncher.csproj", "{C2D05435-D225-410D-8743-F82319DD7949}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KLauncher.Libs", "KLauncher.Libs\KLauncher.Libs.csproj", "{316F4D46-4285-4A9C-94E6-C8F9CD519513}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2D05435-D225-410D-8743-F82319DD7949}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2D05435-D225-410D-8743-F82319DD7949}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2D05435-D225-410D-8743-F82319DD7949}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C2D05435-D225-410D-8743-F82319DD7949}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2D05435-D225-410D-8743-F82319DD7949}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2D05435-D225-410D-8743-F82319DD7949}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{316F4D46-4285-4A9C-94E6-C8F9CD519513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{316F4D46-4285-4A9C-94E6-C8F9CD519513}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{316F4D46-4285-4A9C-94E6-C8F9CD519513}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{316F4D46-4285-4A9C-94E6-C8F9CD519513}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {835EC762-8AC7-4A65-8E35-48A14552B633}
+	EndGlobalSection
+EndGlobal
