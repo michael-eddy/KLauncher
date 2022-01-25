@@ -1,8 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-</RelativeLayout>
+    android:layout_height="match_parent"
+    android:paddingTop="24dp"
+    android:orientation="vertical"
+    android:background="@drawable/bg"
+    android:fitsSystemWindows="true">
+    <TextView
+        android:id="@+id/textViewTime"
+        android:text="20:00"
+        android:textSize="28px"
+        android:gravity="center_horizontal"
+        android:textFontWeight="1000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    <TextView
+        android:id="@+id/textViewTemp"
+        android:text="20°C"
+        android:textSize="16px"
+        android:gravity="center_horizontal"
+        android:textFontWeight="1000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    
+</LinearLayout>

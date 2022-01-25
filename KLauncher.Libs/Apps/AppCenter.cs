@@ -36,6 +36,7 @@ namespace KLauncher.Libs
         }
         public void UpdateList()
         {
+            if (IsComplete) return;
             Task.Factory.StartNew(() =>
             {
                 var apps = DB.Connection.Table<AppItem>().ToList();

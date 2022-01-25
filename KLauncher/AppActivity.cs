@@ -3,7 +3,6 @@ using Android.Content;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using AndroidX.AppCompat.App;
 using KLauncher.Adapters;
 using KLauncher.Libs;
 using KLauncher.Libs.Models;
@@ -15,7 +14,7 @@ using Xamarin.Essentials;
 namespace KLauncher
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme")]
-    public sealed class AppActivity : AppCompatActivity
+    public sealed class AppActivity : BaseActivity
     {
         public List<AppItem> Items { get; }
         private ListView AppList { get; set; }
@@ -29,7 +28,6 @@ namespace KLauncher
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_applist);
-
             AppList = FindViewById<ListView>(Resource.Id.appList);
             Adapter = new AppItemAdapter(this, Items);
             Adapter.ItemClick += Adapter_ItemClick;
@@ -60,6 +58,7 @@ namespace KLauncher
                 Items.Clear();
                 Items.AddRange(appItems);
                 Adapter.NotifyDataSetChanged();
+                AppList.SetSelection(0);
             }
             catch (Exception ex)
             {
@@ -72,17 +71,22 @@ namespace KLauncher
             {
                 case Keycode.PageUp:
                     {
-
+                        var index = AppList.SelectedItemPosition;
+                        if (index > 0)
+                            AppList.SetSelection(index - 1);
                         break;
                     }
                 case Keycode.PageDown:
                     {
-                        AppList.SetSelection(1);
+                        var index = AppList.SelectedItemPosition;
+                        if (index < Items.Count - 1)
+                            AppList.SetSelection(index + 1);
                         break;
                     }
                 case Keycode.Enter:
                     {
-
+                        var index = AppList.SelectedItemPosition;
+                        Adapter_ItemClick(index);
                         break;
                     }
                 case Keycode.SoftRight:

@@ -1,19 +1,18 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
+﻿using Android.Content;
+using Android.Graphics;
 using Android.Views;
-using Android.Widget;
 using AndroidX.AppCompat.App;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace KLauncher.Libs
 {
-    public abstract class ApplicationCompatActivity : AppCompatActivity
+    public abstract class BaseActivity : AppCompatActivity
     {
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Window.SetStatusBarColor(Color.Transparent);
+
+        }
         public override void StartActivity(Intent intent)
         {
             base.StartActivity(intent);

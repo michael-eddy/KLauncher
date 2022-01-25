@@ -9,11 +9,24 @@ using Android.OS;
 using FFImageLoading;
 using FFImageLoading.Cache;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace KLauncher.Libs
 {
     public static class Extension
     {
+        public static T ParseObject<T>(this string json)
+        {
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(json);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("ToObject", ex);
+            }
+            return default;
+        }
         public static bool OpenApp(this Context context, string packageName)
         {
             try
