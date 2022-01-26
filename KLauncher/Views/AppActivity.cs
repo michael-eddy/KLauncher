@@ -5,6 +5,7 @@ using Android.Views;
 using Android.Widget;
 using KLauncher.Adapters;
 using KLauncher.Libs;
+using KLauncher.Libs.Core;
 using KLauncher.Libs.Models;
 using System;
 using System.Collections.Generic;
@@ -54,7 +55,9 @@ namespace KLauncher
         {
             try
             {
-                var appItems = AppCenter.Instance.Apps;
+                IEnumerable<AppItem> appItems = AppCenter.Instance.Apps;
+                if (!SettingHelper.ShowHidden)
+                    appItems = appItems.Where(x => x.IsVisable);
                 Items.Clear();
                 Items.AddRange(appItems);
                 Adapter.NotifyDataSetChanged();

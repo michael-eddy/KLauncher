@@ -5,6 +5,22 @@ namespace KLauncher.Libs.Core
 {
     public sealed class SettingHelper
     {
+        public static bool ShowHidden
+        {
+            get
+            {
+                try
+                {
+                    GetData("ShowHidden", out string value);
+                    return value == "1";
+                }
+                catch { return false; }
+            }
+            set
+            {
+                SaveData("ShowHidden", value ? "1" : "0");
+            }
+        }
         public static bool UseRest
         {
             get
@@ -19,6 +35,22 @@ namespace KLauncher.Libs.Core
             set
             {
                 SaveData("UseRest", value ? "1" : "0");
+            }
+        }
+        public static bool ShowSec
+        {
+            get
+            {
+                try
+                {
+                    GetData("ShowSec", out string value);
+                    return value == "1";
+                }
+                catch { return false; }
+            }
+            set
+            {
+                SaveData("ShowSec", value ? "1" : "0");
             }
         }
         private static bool GetData(string name, out string value)
