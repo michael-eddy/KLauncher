@@ -7,12 +7,24 @@ namespace KLauncher.Libs.Client
     public sealed class WeatherClient : BaseClient
     {
         private const string API_KEY = "1502b6fccfd45618a92ea9128471c8d5";
-        public async Task<ReturnModel<CityInfo>> GetCityCode()
+        public async Task<string> GetIpAddress()
         {
             try
             {
-                string url = string.Format("https://restapi.amap.com/v3/ip?key={0}", API_KEY);
-                var result = await ApiClient.GetResultsGZip(url).ConfigureAwait(false);
+                var result = await ApiClient.GetResults("http://ip-api.com/json").ConfigureAwait(false);
+                var m = result.ParseJObject();
+                if (m != null)
+                    return m["query"].ToString();
+            }
+            catch { }
+            return string.Empty;
+        }
+        public async Task<ReturnModel<CityInfo>> GetCityCode(string ip)
+        {
+            try
+            {
+                string url = $"https://restapi.amap.com/v3/ip?ip={ip}&key={API_KEY}";
+                var result = await ApiClient.GetResults(url).ConfigureAwait(false);
                 var m = result.ParseObject<CityInfo>();
                 return BuildSuccessResult(m);
             }
@@ -27,7 +39,7 @@ namespace KLauncher.Libs.Client
             {
                 string url = string.Format("https://restapi.amap.com/v3/weather/weatherInfo?key={0}&city={1}",
                    API_KEY, cityNo);
-                var result = await ApiClient.GetResultsGZip(url).ConfigureAwait(false);
+                var result = await ApiClient.GetResults(url).ConfigureAwait(false);
                 var m = result.ParseObject<WeatherInfo>();
                 return BuildSuccessResult(m);
             }

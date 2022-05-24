@@ -8,13 +8,13 @@ using KLauncher.Libs;
 using KLauncher.Libs.Client;
 using KLauncher.Tasks;
 using System;
+using System.IO;
 using System.Linq;
 using Xamarin.Essentials;
 
 namespace KLauncher
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true,
-        ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
     [IntentFilter(new[] { "android.intent.action.MAIN" }, Categories = new[] { "android.intent.category.HOME", "android.intent.category.DEFAULT", "android.intent.category.LAUNCHER" })]
     public sealed class MainActivity : BaseActivity
     {
@@ -26,46 +26,66 @@ namespace KLauncher
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             AppCenter.Instance.UpdateList();
-            RunOnUiThread(() =>
-            {
-                InitControls();
-                InitWeatherInfo();
-            });
+            RunOnUiThread(InitControls);
         }
+        private TextView TextViewWind { get; set; }
         private TextView TextViewTemp { get; set; }
+        private TextView TextViewWeather { get; set; }
         public TextView TextViewTime { get; private set; }
         private void InitControls()
         {
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
+            TextViewWind = FindViewById<TextView>(Resource.Id.textViewWind);
             TextViewTemp = FindViewById<TextView>(Resource.Id.textViewTemp);
+            TextViewWeather = FindViewById<TextView>(Resource.Id.textViewWeather);
             var handler = new TimeHandler(this);
             TimeThread m = new TimeThread(handler);
             new Java.Lang.Thread(m).Start();
         }
-        private async void InitWeatherInfo()
+        private void InitWeatherInfo()
         {
-            try
+            RunOnUiThread(async () =>
             {
-                var cityInfo = await Weather.GetCityCode();
-                if (cityInfo != null && cityInfo.Data.Status == 1)
+                try
                 {
-                    var weatherInfo = await Weather.GetWeatherInfo(cityInfo.Data.Adcode);
-                    if (weatherInfo != null && weatherInfo.Data.Status == 1 && weatherInfo.Data.Count > 0)
+                    var ipString = await Weather.GetIpAddress();
+                    if (!string.IsNullOrEmpty(ipString))
                     {
-                        var current = weatherInfo.Data.Lives.FirstOrDefault();
-                        TextViewTemp.Text = $"{current.Temperature}°C";
+                        var cityInfo = await Weather.GetCityCode(ipString);
+                        if (cityInfo != null && cityInfo.Data.Status == 1)
+                        {
+                            var weatherInfo = await Weather.GetWeatherInfo(cityInfo.Data.Adcode);
+                            if (weatherInfo != null && weatherInfo.Data.Status == 1 && weatherInfo.Data.Count > 0)
+                            {
+                                var current = weatherInfo.Data.Lives.FirstOrDefault();
+                                TextViewWeather.Text = $"天气 {current.Weather}";
+                                TextViewTemp.Text = $"温度 {current.Temperature}°C";
+                                TextViewWind.Text = $"风向 {current.WindDirection} {current.WindPower}级";
+                            }
+                        }
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogManager.Instance.LogError("InitWeatherInfo", ex);
-            }
+                catch (Exception ex)
+                {
+                    LogManager.Instance.LogError("InitWeatherInfo", ex);
+                }
+            });
         }
         public override bool DispatchKeyEvent(KeyEvent e)
         {
             switch (e.KeyCode)
             {
+                case Keycode.Back:
+                    return true;
+                case Keycode.Menu:
+                    {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(this, typeof(AppActivity));
+                            StartActivity(intent);
+                        }
+                        break;
+                    }
                 case Keycode.PageUp:
                     {
 
@@ -76,10 +96,9 @@ namespace KLauncher
 
                         break;
                     }
-                case Keycode.Enter:
+                case Keycode.Pound:
                     {
-                        Intent intent = new Intent(this, typeof(AppActivity));
-                        StartActivity(intent);
+
                         break;
                     }
             }
@@ -91,11 +110,13 @@ namespace KLauncher
             Weather = new WeatherClient();
             PackageReceiver = new PackageReceiver();
             IntentFilter filter = new IntentFilter();
+            Current.Instance.Init();
             filter.AddAction("android.intent.action.PACKAGE_ADDED");
             filter.AddAction("android.intent.action.PACKAGE_REMOVED");
             filter.AddDataScheme("package");
             RegisterReceiver(PackageReceiver, filter);
             Window.DecorView.SystemUiVisibility = StatusBarVisibility.Hidden;
+            InitWeatherInfo();
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {

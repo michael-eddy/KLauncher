@@ -10,7 +10,6 @@
     android:fitsSystemWindows="true">
     <TextView
         android:id="@+id/textViewTime"
-        android:text="20:00"
         android:textSize="28px"
         android:gravity="center_horizontal"
         android:textFontWeight="1000"
@@ -19,12 +18,43 @@
         android:textColor="@android:color/white" />
     <TextView
         android:id="@+id/textViewTemp"
-        android:text="20°C"
         android:textSize="16px"
         android:gravity="center_horizontal"
         android:textFontWeight="1000"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/white" />
-    
+    <TextView
+        android:id="@+id/textViewWeather"
+        android:textSize="16px"
+        android:gravity="center_horizontal"
+        android:textFontWeight="1000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    <TextView
+        android:id="@+id/textViewWind"
+        android:textSize="16px"
+        android:gravity="center_horizontal"
+        android:textFontWeight="1000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <TextView
+        android:gravity="left"
+        android:text="应用列表"
+        android:textSize="16px"
+        android:padding="12px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    </LinearLayout>
 </LinearLayout>

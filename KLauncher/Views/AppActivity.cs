@@ -86,16 +86,30 @@ namespace KLauncher
                             AppList.SetSelection(index + 1);
                         break;
                     }
-                case Keycode.Enter:
+                case Keycode.DpadCenter:
                     {
-                        var index = AppList.SelectedItemPosition;
-                        Adapter_ItemClick(index);
+                        if (!this.IsFastDoubleClick())
+                        {
+                            var index = AppList.SelectedItemPosition;
+                            Adapter_ItemClick(index);
+                        }
                         break;
                     }
                 case Keycode.SoftRight:
                     {
-                        Intent intent = new Intent(this, typeof(MainActivity));
-                        StartActivity(intent);
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(this, typeof(MainActivity));
+                            StartActivity(intent);
+                        }
+                        break;
+                    }
+                case Keycode.Menu:
+                    {
+                        if (!this.IsFastDoubleClick())
+                        {
+
+                        }
                         break;
                     }
             }

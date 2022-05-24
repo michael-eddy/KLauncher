@@ -35,6 +35,7 @@ namespace KLauncher.Adapters
                 };
                 convertView.Click += (_, _) =>
                 {
+                    var position = ((ViewHolderBox)convertView.Tag).Position;
                     ItemClick?.Invoke(position);
                 };
                 convertView.Tag = itemHolder;
@@ -46,6 +47,7 @@ namespace KLauncher.Adapters
             try
             {
                 var item = Apps.ElementAt(position);
+                itemHolder.Position = position;
                 itemHolder.DisplayIcon.LoadImage(item.Icon);
                 itemHolder.PackageName = item.PackageName;
                 itemHolder.DisplayName.SetText(item.DisplayName, TextView.BufferType.Normal);

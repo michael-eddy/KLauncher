@@ -10,11 +10,27 @@ using FFImageLoading;
 using FFImageLoading.Cache;
 using System.Linq;
 using Newtonsoft.Json;
+using Java.Lang;
+using Exception = System.Exception;
+using Newtonsoft.Json.Linq;
 
 namespace KLauncher.Libs
 {
     public static class Extension
     {
+        public static long ClickTime { get; set; }
+        public static JObject ParseJObject(this string json)
+        {
+            try
+            {
+                return JObject.Parse(json);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("JObject", ex);
+            }
+            return default;
+        }
         public static T ParseObject<T>(this string json)
         {
             try
@@ -157,6 +173,14 @@ namespace KLauncher.Libs
                 LogManager.Instance.LogError("IsEmpty", ex);
                 return true;
             }
+        }
+        public static bool IsFastDoubleClick(this Context _)
+        {
+            long time = JavaSystem.CurrentTimeMillis();
+            long timeD = time - ClickTime;
+            if (timeD > 1000)
+                ClickTime = time;
+            return timeD <= 1000;
         }
         public static bool IsNotEmpty<T>(this T obj)
         {

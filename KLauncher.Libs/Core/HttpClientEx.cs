@@ -10,6 +10,10 @@ namespace KLauncher.Libs.Core
     public sealed class HttpClientEx : IApiClient
     {
         private HttpClient HttpClient { get; set; }
+        public HttpClientEx()
+        {
+            HttpClient = new HttpClient();
+        }
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(8);
         public async Task<string> GetResults(string url)
         {
