@@ -19,6 +19,7 @@ namespace KLauncher
     {
         public List<AppItem> Items { get; }
         private ListView AppList { get; set; }
+        private TextView TextViewMenu { get; set; }
         private AppItemAdapter Adapter { get; set; }
         public AppActivity()
         {
@@ -30,8 +31,10 @@ namespace KLauncher
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_applist);
             AppList = FindViewById<ListView>(Resource.Id.appList);
+            TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
             Adapter = new AppItemAdapter(this, Items);
             Adapter.ItemClick += Adapter_ItemClick;
+            Adapter.ItemLongClick += Adapter_ItemLongClick;
             AppList.Adapter = Adapter;
             AppCenter.Instance.AppUpdate += Instance_AppUpdate;
             RunOnUiThread(() =>
@@ -40,6 +43,23 @@ namespace KLauncher
                     AppUpdate();
             });
         }
+        private int position;
+        private PopupMenu menu;
+        private void Adapter_ItemLongClick(View sender, int position)
+        {
+            this.position = position;
+            menu = new PopupMenu(this, sender);
+            menu.MenuInflater.Inflate(Resource.Menu.app_menu, menu.Menu);
+            menu.MenuItemClick += PopupMenu_MenuItemClick;
+            menu.DismissEvent += Menu_DismissEvent;
+            menu.Show();
+        }
+        private void Menu_DismissEvent(object sender, PopupMenu.DismissEventArgs e)
+        {
+            menu.MenuItemClick -= PopupMenu_MenuItemClick;
+            menu.DismissEvent -= Menu_DismissEvent;
+            menu.Dispose();
+        }
         private void Adapter_ItemClick(object sender)
         {
             var position = sender.ToInt32();
@@ -47,10 +67,7 @@ namespace KLauncher
             if (item != null)
                 this.OpenApp(item.PackageName);
         }
-        private void Instance_AppUpdate(object sender)
-        {
-            AppUpdate();
-        }
+        private void Instance_AppUpdate(object sender) => AppUpdate();
         private void AppUpdate()
         {
             try
@@ -77,14 +94,14 @@ namespace KLauncher
                         var index = AppList.SelectedItemPosition;
                         if (index > 0)
                             AppList.SetSelection(index - 1);
-                        break;
+                        return true;
                     }
                 case Keycode.PageDown:
                     {
                         var index = AppList.SelectedItemPosition;
                         if (index < Items.Count - 1)
                             AppList.SetSelection(index + 1);
-                        break;
+                        return true;
                     }
                 case Keycode.DpadCenter:
                     {
@@ -93,7 +110,7 @@ namespace KLauncher
                             var index = AppList.SelectedItemPosition;
                             Adapter_ItemClick(index);
                         }
-                        break;
+                        return true;
                     }
                 case Keycode.SoftRight:
                     {
@@ -102,18 +119,59 @@ namespace KLauncher
                             Intent intent = new Intent(this, typeof(MainActivity));
                             StartActivity(intent);
                         }
-                        break;
+                        return true;
                     }
                 case Keycode.Menu:
                     {
                         if (!this.IsFastDoubleClick())
                         {
-
+                            menu = new PopupMenu(this, TextViewMenu);
+                            menu.MenuInflater.Inflate(Resource.Menu.view_menu, menu.Menu);
+                            menu.MenuItemClick += PopupMenu_MenuItemClick;
+                            menu.DismissEvent += Menu_DismissEvent;
+                            menu.Show();
                         }
-                        break;
+                        return true;
                     }
             }
             return base.DispatchKeyEvent(e);
+        }
+        private void PopupMenu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
+        {
+            switch (e.Item.ItemId)
+            {
+                case Resource.Id.appmanage:
+                    {
+                        break;
+                    }
+                case Resource.Id.setting:
+                    {
+                        break;
+                    }
+                case Resource.Id.clear:
+                    {
+                        break;
+                    }
+                case Resource.Id.open:
+                    {
+                        if (!this.IsFastDoubleClick())
+                            Adapter_ItemClick(position);
+                        break;
+                    }
+                case Resource.Id.remove:
+                    {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            var index = AppList.SelectedItemPosition;
+                            Adapter_ItemClick(index);
+                        }
+                        break;
+                    }
+                default:
+                    {
+                        break;
+                    }
+            }
         }
     }
 }

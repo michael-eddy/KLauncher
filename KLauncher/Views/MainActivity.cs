@@ -84,22 +84,22 @@ namespace KLauncher
                             Intent intent = new Intent(this, typeof(AppActivity));
                             StartActivity(intent);
                         }
-                        break;
+                        return true;
                     }
                 case Keycode.PageUp:
                     {
 
-                        break;
+                        return true;
                     }
                 case Keycode.PageDown:
                     {
 
-                        break;
+                        return true;
                     }
                 case Keycode.Pound:
                     {
 
-                        break;
+                        return true;
                     }
             }
             return base.DispatchKeyEvent(e);

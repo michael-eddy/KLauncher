@@ -14,6 +14,7 @@ namespace KLauncher.Adapters
         private Context Context { get; }
         private List<AppItem> Apps { get; }
         public event CallbackObject ItemClick;
+        public event CallbackViewObject ItemLongClick;
         public AppItemAdapter(Context context, List<AppItem> items)
         {
             Apps = items;
@@ -37,6 +38,11 @@ namespace KLauncher.Adapters
                 {
                     var position = ((ViewHolderBox)convertView.Tag).Position;
                     ItemClick?.Invoke(position);
+                };
+                convertView.LongClick += (_, _) =>
+                {
+                    var position = ((ViewHolderBox)convertView.Tag).Position;
+                    ItemLongClick?.Invoke(convertView, position);
                 };
                 convertView.Tag = itemHolder;
             }
