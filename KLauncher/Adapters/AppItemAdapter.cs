@@ -10,15 +10,16 @@ using JavaObject = Java.Lang.Object;
 namespace KLauncher.Adapters
 {
     public sealed class AppItemAdapter : BaseAdapter
-    {
+    {private bool Clickable { get; }
         private Context Context { get; }
         private List<AppItem> Apps { get; }
         public event CallbackObject ItemClick;
         public event CallbackViewObject ItemLongClick;
-        public AppItemAdapter(Context context, List<AppItem> items)
+        public AppItemAdapter(Context context, List<AppItem> items, bool clickable)
         {
             Apps = items;
             Context = context;
+            Clickable = clickable;
         }
         public override int Count => Apps == null ? 0 : Apps.Count;
         public override JavaObject GetItem(int position) => Apps?.ElementAt(position);
@@ -34,16 +35,19 @@ namespace KLauncher.Adapters
                     DisplayIcon = convertView.FindViewById<ImageView>(Resource.Id.displayIcon),
                     DisplayName = convertView.FindViewById<TextView>(Resource.Id.displayName)
                 };
-                convertView.Click += (_, _) =>
+                if (Clickable)
                 {
-                    var position = ((ViewHolderBox)convertView.Tag).Position;
-                    ItemClick?.Invoke(position);
-                };
-                convertView.LongClick += (_, _) =>
-                {
-                    var position = ((ViewHolderBox)convertView.Tag).Position;
-                    ItemLongClick?.Invoke(convertView, position);
-                };
+                    convertView.Click += (_, _) =>
+                    {
+                        var position = ((ViewHolderBox)convertView.Tag).Position;
+                        ItemClick?.Invoke(position);
+                    };
+                    convertView.LongClick += (_, _) =>
+                    {
+                        var position = ((ViewHolderBox)convertView.Tag).Position;
+                        ItemLongClick?.Invoke(convertView, position);
+                    };
+                }
                 convertView.Tag = itemHolder;
             }
             else

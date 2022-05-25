@@ -35,7 +35,7 @@ namespace KLauncher
             AppList = FindViewById<ListView>(Resource.Id.appList);
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
-            Adapter = new AppItemAdapter(this, Items);
+            Adapter = new AppItemAdapter(this, Items, true);
             Adapter.ItemClick += Adapter_ItemClick;
             Adapter.ItemLongClick += Adapter_ItemLongClick;
             TextViewBack.Click += TextViewBack_Click;
@@ -120,20 +120,6 @@ namespace KLauncher
                         Adapter_ItemLongClick(TextViewMenu, AppList.SelectedItemPosition);
                         break;
                     }
-                case Keycode.PageUp:
-                    {
-                        var index = AppList.SelectedItemPosition;
-                        if (index > 0)
-                            AppList.SetSelection(index - 1);
-                        return true;
-                    }
-                case Keycode.PageDown:
-                    {
-                        var index = AppList.SelectedItemPosition;
-                        if (index < Items.Count - 1)
-                            AppList.SetSelection(index + 1);
-                        return true;
-                    }
                 case Keycode.DpadCenter:
                     {
                         if (!this.IsFastDoubleClick())
@@ -186,6 +172,11 @@ namespace KLauncher
                     }
                 case Resource.Id.clear:
                     {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(this, typeof(CleanActivity));
+                            StartActivity(intent);
+                        }
                         break;
                     }
                 case Resource.Id.open:

@@ -74,6 +74,7 @@
     <Compile Include="Adapters\ViewHolderBox.cs" />
     <Compile Include="Views\AboutActivity.cs" />
     <Compile Include="Views\AppActivity.cs" />
+    <Compile Include="Views\CleanActivity.cs" />
     <Compile Include="Views\MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

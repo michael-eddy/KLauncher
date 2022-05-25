@@ -34,6 +34,10 @@ namespace KLauncher.Libs
             Intent = new Intent(Intent.ActionMain, null);
             Intent.AddCategory(Intent.CategoryLauncher);
         }
+        public IEnumerable<AppItem> Take(IEnumerable<string> packages)
+        {
+            return Apps.Where(x => packages.Contains(x.PackageName));
+        }
         public void UpdateList()
         {
             if (IsComplete) return;
