@@ -127,7 +127,7 @@ namespace KLauncher
                     }
                 case Keycode.Pound:
                     {
-
+                        new CleanerThread(this, .6).Start();
                         return true;
                     }
             }

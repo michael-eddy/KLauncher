@@ -42,6 +42,20 @@
                 android:layout_height="match_parent" 
                 android:id="@+id/showSecSwitch" />
         </LinearLayout>
+        <LinearLayout android:orientation="horizontal" 
+            android:paddingTop="12px" 
+            android:paddingBottom="12px" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:background="@drawable/border_style_bottom">
+            <Switch android:text="使用Shell清理内存" 
+                android:layout_marginLeft="12px" 
+                android:layout_marginRight="12px" 
+                android:textSize="16px" 
+                android:layout_width="match_parent" 
+                android:layout_height="match_parent" 
+                android:id="@+id/shellClearSwitch" />
+        </LinearLayout>
         </LinearLayout>
         </ScrollView>
     <LinearLayout

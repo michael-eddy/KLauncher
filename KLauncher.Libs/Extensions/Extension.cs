@@ -11,9 +11,11 @@ using FFImageLoading.Cache;
 using System.Linq;
 using Newtonsoft.Json;
 using Java.Lang;
-using Exception = System.Exception;
 using Newtonsoft.Json.Linq;
 using Android.Telephony;
+using Java.IO;
+using Exception = System.Exception;
+using System.Text.RegularExpressions;
 
 namespace KLauncher.Libs
 {
@@ -43,6 +45,21 @@ namespace KLauncher.Libs
                 LogManager.Instance.LogError("ToObject", ex);
             }
             return default;
+        }
+        public static long GetTotalMemory(this Context _)
+        {
+            long initial_memory = 0;
+            try
+            {
+                FileReader localFileReader = new FileReader("/proc/meminfo");
+                var localBufferedString = new BufferedReader(localFileReader, 8192).ReadLine();
+                var localBufferedValue = Regex.Replace(localBufferedString, @"[^0-9]+", "");
+                initial_memory = localBufferedValue.ToInt32() * 1024L;
+                localFileReader.Close();
+                localFileReader.Dispose();
+            }
+            catch { }
+            return initial_memory;
         }
         public static string OperatorName(this Context context)
         {

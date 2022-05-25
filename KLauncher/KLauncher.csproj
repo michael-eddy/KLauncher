@@ -72,6 +72,7 @@
   <ItemGroup>
     <Compile Include="Adapters\AppItemAdapter.cs" />
     <Compile Include="Adapters\ViewHolderBox.cs" />
+    <Compile Include="Tasks\CleanerThread.cs" />
     <Compile Include="Views\AboutActivity.cs" />
     <Compile Include="Views\AppActivity.cs" />
     <Compile Include="Views\CleanActivity.cs" />
@@ -87,6 +88,9 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
+    <AndroidNativeLibrary Include="libs\arm64-v8a\libcleaner.so">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AndroidNativeLibrary>
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>

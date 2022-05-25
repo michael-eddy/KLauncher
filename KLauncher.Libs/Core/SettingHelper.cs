@@ -53,6 +53,22 @@ namespace KLauncher.Libs.Core
                 SaveData("ShowSec", value ? "1" : "0");
             }
         }
+        public static bool UseShell
+        {
+            get
+            {
+                try
+                {
+                    GetData("UseShell", out string value);
+                    return value == "1";
+                }
+                catch { return false; }
+            }
+            set
+            {
+                SaveData("UseShell", value ? "1" : "0");
+            }
+        }
         private static bool GetData(string name, out string value)
         {
             try

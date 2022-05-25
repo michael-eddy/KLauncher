@@ -15,6 +15,7 @@ namespace KLauncher
         private bool FirstLoad = true;
         private Switch ShowSecSwitch { get; set; }
         private Switch HideAppSwitch { get; set; }
+        private Switch ShellClearSwitch { get; set; }
         private TextView TextViewBack { get; set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -24,20 +25,26 @@ namespace KLauncher
             ShowSecSwitch = FindViewById<Switch>(Resource.Id.showSecSwitch);
             HideAppSwitch = FindViewById<Switch>(Resource.Id.hideAppSwitch);
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
+            ShellClearSwitch = FindViewById<Switch>(Resource.Id.shellClearSwitch);
             TextViewBack.Click += TextViewBack_Click;
             HideAppSwitch.CheckedChange += HideAppSwitch_CheckedChange;
             ShowSecSwitch.CheckedChange += ShowSecSwitch_CheckedChange;
+            ShellClearSwitch.CheckedChange += ShellClearSwitch_CheckedChange;
             RunOnUiThread(() =>
             {
                 ShowSecSwitch.Checked = SettingHelper.ShowSec;
+                ShellClearSwitch.Checked = SettingHelper.UseShell;
                 HideAppSwitch.Checked = SettingHelper.ShowHidden;
                 FirstLoad = false;
             });
         }
-        private void TextViewBack_Click(object sender, EventArgs e)
+        private void ShellClearSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
-            Finish();
+            if (FirstLoad) return;
+            SettingHelper.UseShell = e.IsChecked;
+            this.ShowToast(e.IsChecked ? "启用成功！" : "关闭成功！", ToastLength.Short);
         }
+        private void TextViewBack_Click(object sender, EventArgs e) => Finish();
         private void ShowSecSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
             if (FirstLoad) return;
