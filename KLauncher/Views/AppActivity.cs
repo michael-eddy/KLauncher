@@ -142,10 +142,17 @@ namespace KLauncher
             {
                 case Resource.Id.appmanage:
                     {
+                        Intent intent = new Intent(Android.Provider.Settings.ActionManageAllApplicationsSettings);
+                        StartActivity(intent);
                         break;
                     }
                 case Resource.Id.setting:
                     {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(this, typeof(SettingActivity));
+                            StartActivity(intent);
+                        }
                         break;
                     }
                 case Resource.Id.clear:
@@ -162,13 +169,48 @@ namespace KLauncher
                     {
                         if (!this.IsFastDoubleClick())
                         {
-                            var index = AppList.SelectedItemPosition;
-                            Adapter_ItemClick(index);
+                            var item = Items.ElementAt(position);
+                            var alertDialog = new AlertDialog.Builder(this)
+                                 .SetCancelable(false)
+                                 .SetTitle(item.DisplayName)
+                                 .SetMessage($"是否卸载 {item.DisplayName}？")
+                                 .SetNegativeButton("取消", (_, _) => { }).
+                                 SetPositiveButton("确认", (_, _) =>
+                                 {
+                                     var uri = Android.Net.Uri.FromParts("package", item?.PackageName, null);
+                                     Intent intent = new Intent(Intent.ActionDelete, uri);
+                                     StartActivity(intent);
+                                 }).Create();
+                            alertDialog.Show();
+                        }
+                        break;
+                    }
+                case Resource.Id.info:
+                    {
+                        var packageName = Items.ElementAt(position)?.PackageName;
+                        Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings);
+                        intent.AddFlags(ActivityFlags.NewTask);
+                        intent.SetData(Android.Net.Uri.Parse($"package:{packageName}"));
+                        StartActivity(intent);
+                        break;
+                    }
+                case Resource.Id.hidden:
+                    {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            var item = Items.ElementAt(position);
+                            item.IsVisable = false;
+                            AppCenter.Instance.SaveAsync(item);
                         }
                         break;
                     }
                 default:
                     {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(this, typeof(AboutActivity));
+                            StartActivity(intent);
+                        }
                         break;
                     }
             }

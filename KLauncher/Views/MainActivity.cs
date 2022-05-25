@@ -31,6 +31,7 @@ namespace KLauncher
         private TextView TextViewWind { get; set; }
         private TextView TextViewTemp { get; set; }
         private TextView TextViewWeather { get; set; }
+        private TextView TextViewOperator { get; set; }
         public TextView TextViewTime { get; private set; }
         private void InitControls()
         {
@@ -38,6 +39,7 @@ namespace KLauncher
             TextViewWind = FindViewById<TextView>(Resource.Id.textViewWind);
             TextViewTemp = FindViewById<TextView>(Resource.Id.textViewTemp);
             TextViewWeather = FindViewById<TextView>(Resource.Id.textViewWeather);
+            TextViewOperator = FindViewById<TextView>(Resource.Id.textViewOperator);
             var handler = new TimeHandler(this);
             TimeThread m = new TimeThread(handler);
             new Java.Lang.Thread(m).Start();
@@ -48,6 +50,7 @@ namespace KLauncher
             {
                 try
                 {
+                    TextViewOperator.Text = this.OperatorName();
                     var ipString = await Weather.GetIpAddress();
                     if (!string.IsNullOrEmpty(ipString))
                     {

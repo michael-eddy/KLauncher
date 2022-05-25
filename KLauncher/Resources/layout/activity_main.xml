@@ -17,6 +17,14 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white" />
     <TextView
+        android:id="@+id/textViewOperator"
+        android:textSize="16px"
+        android:gravity="center_horizontal"
+        android:textFontWeight="1000"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white" />
+    <TextView
         android:id="@+id/textViewTemp"
         android:textSize="16px"
         android:gravity="center_horizontal"

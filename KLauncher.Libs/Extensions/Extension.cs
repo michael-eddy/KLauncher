@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Java.Lang;
 using Exception = System.Exception;
 using Newtonsoft.Json.Linq;
+using Android.Telephony;
 
 namespace KLauncher.Libs
 {
@@ -42,6 +43,18 @@ namespace KLauncher.Libs
                 LogManager.Instance.LogError("ToObject", ex);
             }
             return default;
+        }
+        public static string OperatorName(this Context context)
+        {
+            var code = TelephonyManager.FromContext(context).SimOperator;
+            return code switch
+            {
+                "46000" or "46002" or "46004" or "46007" or "46008" => "中国移动",
+                "46001" or "46006" or "46009" => "中国联通",
+                "46003 " or "46005" or "46011" => "中国电信",
+                "46020" => "中国铁通",
+                _ => "其他",
+            };
         }
         public static bool OpenApp(this Context context, string packageName)
         {
