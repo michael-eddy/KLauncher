@@ -1,4 +1,5 @@
 ﻿using Android.App;
+using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
@@ -81,7 +82,7 @@ namespace KLauncher
         private void CleanApp(int index)
         {
             var packageName = Items.ElementAt(index).PackageName;
-            ActivityManager.FromContext(this).KillBackgroundProcesses(packageName);
+            ((ActivityManager)GetSystemService(ActivityService)).KillBackgroundProcesses(packageName);
             Items.RemoveAt(index);
             Adapter.NotifyDataSetChanged();
             AppList.SetSelection(0);
