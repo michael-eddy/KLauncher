@@ -1,8 +1,10 @@
 ﻿using Android.App;
 using Android.OS;
+using Android.Views;
 using Android.Widget;
 using KLauncher.Libs;
 using KLauncher.Libs.Core;
+using System;
 using Xamarin.Essentials;
 
 namespace KLauncher
@@ -13,6 +15,7 @@ namespace KLauncher
         private bool FirstLoad = true;
         private Switch ShowSecSwitch { get; set; }
         private Switch HideAppSwitch { get; set; }
+        private TextView TextViewBack { get; set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -20,6 +23,8 @@ namespace KLauncher
             SetContentView(Resource.Layout.activity_setting);
             ShowSecSwitch = FindViewById<Switch>(Resource.Id.showSecSwitch);
             HideAppSwitch = FindViewById<Switch>(Resource.Id.hideAppSwitch);
+            TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
+            TextViewBack.Click += TextViewBack_Click;
             HideAppSwitch.CheckedChange += HideAppSwitch_CheckedChange;
             ShowSecSwitch.CheckedChange += ShowSecSwitch_CheckedChange;
             RunOnUiThread(() =>
@@ -28,6 +33,10 @@ namespace KLauncher
                 HideAppSwitch.Checked = SettingHelper.ShowHidden;
                 FirstLoad = false;
             });
+        }
+        private void TextViewBack_Click(object sender, EventArgs e)
+        {
+            Finish();
         }
         private void ShowSecSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
         {
@@ -40,6 +49,19 @@ namespace KLauncher
             if (FirstLoad) return;
             SettingHelper.ShowHidden = e.IsChecked;
             this.ShowToast(e.IsChecked ? "启用成功！" : "关闭成功！", ToastLength.Short);
+        }
+        public override bool DispatchKeyEvent(KeyEvent e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keycode.SoftRight:
+                    {
+                        if (!this.IsFastDoubleClick())
+                            Finish();
+                        return true;
+                    }
+            }
+            return base.DispatchKeyEvent(e);
         }
     }
 }

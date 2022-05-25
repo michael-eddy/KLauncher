@@ -8,9 +8,9 @@ using KLauncher.Libs;
 using KLauncher.Libs.Client;
 using KLauncher.Tasks;
 using System;
-using System.IO;
 using System.Linq;
 using Xamarin.Essentials;
+using Thread = Java.Lang.Thread;
 
 namespace KLauncher
 {
@@ -28,6 +28,8 @@ namespace KLauncher
             AppCenter.Instance.UpdateList();
             RunOnUiThread(InitControls);
         }
+        private Thread Thread { get; set; }
+        private TextView TextViewList { get; set; }
         private TextView TextViewWind { get; set; }
         private TextView TextViewTemp { get; set; }
         private TextView TextViewWeather { get; set; }
@@ -35,14 +37,38 @@ namespace KLauncher
         public TextView TextViewTime { get; private set; }
         private void InitControls()
         {
+            TextViewList =  FindViewById<TextView>(Resource.Id.textViewList);
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
             TextViewWind = FindViewById<TextView>(Resource.Id.textViewWind);
             TextViewTemp = FindViewById<TextView>(Resource.Id.textViewTemp);
             TextViewWeather = FindViewById<TextView>(Resource.Id.textViewWeather);
             TextViewOperator = FindViewById<TextView>(Resource.Id.textViewOperator);
-            var handler = new TimeHandler(this);
-            TimeThread m = new TimeThread(handler);
-            new Java.Lang.Thread(m).Start();
+            TextViewList.Click += TextViewList_Click;
+        }
+        private void TextViewList_Click(object sender, EventArgs e)
+        {
+            if (!this.IsFastDoubleClick())
+            {
+                Intent intent = new Intent(this, typeof(AppActivity));
+                StartActivity(intent);
+            }
+        }
+        protected override void OnResume()
+        {
+            base.OnResume();
+            try
+            {
+                var handler = new TimeHandler(this);
+                TimeThread m = new TimeThread(handler);
+                Thread = new Thread(m);
+                Thread.Start();
+            }
+            catch { }
+        }
+        protected override void OnPause()
+        {
+            base.OnPause();
+            Thread.Interrupt();
         }
         private void InitWeatherInfo()
         {

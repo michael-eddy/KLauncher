@@ -14,12 +14,16 @@ namespace KLauncher
             var options = new SQLiteConnectionString(dbPath, true, "MKBWLSAK");
             Connection = new SQLiteConnection(options);
             if (!HasTable())
-                Connection.CreateTable<AppItem>(CreateFlags.None);
+            {
+                Connection.CreateTable<Setting>(CreateFlags.AutoIncPK);
+                Connection.CreateTable<AppItem>(CreateFlags.AutoIncPK);
+            }
         }
         private bool HasTable()
         {
             try
             {
+                Connection.Table<Setting>().FirstOrDefault();
                 Connection.Table<AppItem>().FirstOrDefault();
                 return true;
             }

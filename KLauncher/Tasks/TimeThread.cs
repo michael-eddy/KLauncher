@@ -15,12 +15,16 @@ namespace KLauncher.Tasks
         }
         public void Run()
         {
-            Message msg = Handler.ObtainMessage();
-            Bundle bundle = new Bundle();
-            var time = DateTime.Now.ToString(SettingHelper.ShowSec ? "HH:mm:ss" : "HH:mm");
-            bundle.PutString("time", time);
-            msg.Data = bundle;
-            Handler.SendMessage(msg);
+            while (true)
+            {
+                Thread.Sleep(900);
+                Message msg = Handler.ObtainMessage();
+                Bundle bundle = new Bundle();
+                var time = DateTime.Now.ToString(SettingHelper.ShowSec ? "HH:mm:ss" : "HH:mm");
+                bundle.PutString("time", time);
+                msg.Data = bundle;
+                Handler.SendMessage(msg);
+            }
         }
     }
 }
