@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">KLauncher</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_lock_desc">快捷锁定屏幕</string>
 </resources>

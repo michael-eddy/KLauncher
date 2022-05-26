@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
+using Android.Views.Accessibility;
 using Android.Widget;
 using KLauncher.Libs;
 using KLauncher.Libs.Client;
@@ -29,6 +30,7 @@ namespace KLauncher
             RunOnUiThread(InitControls);
         }
         private Thread Thread { get; set; }
+        private CleanDialog Dialog { get; set; }
         private TextView TextViewList { get; set; }
         private TextView TextViewWind { get; set; }
         private TextView TextViewTemp { get; set; }
@@ -37,7 +39,9 @@ namespace KLauncher
         public TextView TextViewTime { get; private set; }
         private void InitControls()
         {
-            TextViewList =  FindViewById<TextView>(Resource.Id.textViewList);
+            Dialog = CleanDialog.Instance;
+            Dialog.OnHidden += Dialog_OnHidden;
+            TextViewList = FindViewById<TextView>(Resource.Id.textViewList);
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
             TextViewWind = FindViewById<TextView>(Resource.Id.textViewWind);
             TextViewTemp = FindViewById<TextView>(Resource.Id.textViewTemp);
@@ -45,6 +49,7 @@ namespace KLauncher
             TextViewOperator = FindViewById<TextView>(Resource.Id.textViewOperator);
             TextViewList.Click += TextViewList_Click;
         }
+        private void Dialog_OnHidden(object sender) => HideFragment(Dialog);
         private void TextViewList_Click(object sender, EventArgs e)
         {
             if (!this.IsFastDoubleClick())
@@ -68,7 +73,12 @@ namespace KLauncher
         protected override void OnPause()
         {
             base.OnPause();
-            Thread.Interrupt();
+            try
+            {
+                Thread.Interrupt();
+                Thread.Dispose();
+            }
+            catch { }
         }
         private void InitWeatherInfo()
         {
@@ -105,7 +115,11 @@ namespace KLauncher
             switch (e.KeyCode)
             {
                 case Keycode.Back:
-                    return true;
+                    {
+                        if (!this.IsFastDoubleClick())
+                            ShowFragment(Dialog, "clean_dialog");
+                        return true;
+                    }
                 case Keycode.Menu:
                     {
                         if (!this.IsFastDoubleClick())
@@ -115,19 +129,60 @@ namespace KLauncher
                         }
                         return true;
                     }
-                case Keycode.PageUp:
+                case Keycode.DpadUp:
                     {
-
+                        if (!this.IsFastDoubleClick())
+                        {
+                            Intent intent = new Intent(Intent.ActionMain);
+                            intent.AddCategory(Intent.CategoryAppMessaging);
+                            intent.AddFlags(ActivityFlags.NewTask);
+                            StartActivity(intent);
+                        }
                         return true;
                     }
-                case Keycode.PageDown:
+                case Keycode.DpadDown:
                     {
-
+                        if (!this.IsFastDoubleClick())
+                        {
+                            try
+                            {
+                                var service = GetSystemService("statusbar");
+                                var javaClass = Java.Lang.Class.ForName("android.app.StatusBarManager");
+                                var expand = javaClass.GetMethod("expandNotificationsPanel");
+                                expand.Invoke(service);
+                            }
+                            catch (Exception ex)
+                            {
+                                this.ShowToast(ex.Message, ToastLength.Short);
+                            }
+                        }
                         return true;
                     }
                 case Keycode.Pound:
                     {
-                        new CleanerThread(this, .6).Start();
+                        if (!this.IsFastDoubleClick())
+                        {
+                            if (HasAccessibility)
+                            {
+                                Intent intent = new Intent(LockAccessibilityService.ACTION_LOCK, null, this, typeof(LockAccessibilityService));
+                                StartService(intent);
+                            }
+                            else
+                            {
+                                new AlertDialog.Builder(this)
+                                    .SetMessage("需要启动辅助功能才能使用快捷锁屏功能！")
+                                    .SetPositiveButton("确定", (_, _) =>
+                                    {
+                                        Intent intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
+                                        intent.AddFlags(ActivityFlags.NewTask);
+                                        StartActivity(intent);
+                                    })
+                                    .SetNegativeButton("取消", (dialog, _) =>
+                                    {
+                                        (dialog as AlertDialog)?.Dismiss();
+                                    }).Show();
+                            }
+                        }
                         return true;
                     }
             }
@@ -157,6 +212,25 @@ namespace KLauncher
             if (PackageReceiver != null)
                 UnregisterReceiver(PackageReceiver);
             base.OnDestroy();
+        }
+        public bool HasAccessibility
+        {
+            get
+            {
+                bool hasAccessibility = false;
+                var accessibilityManager = (AccessibilityManager)GetSystemService(AccessibilityService);
+                var list = accessibilityManager.GetEnabledAccessibilityServiceList(Android.AccessibilityServices.FeedbackFlags.AllMask);
+                foreach (var item in list)
+                {
+                    ServiceInfo enabledServiceInfo = item.ResolveInfo.ServiceInfo;
+                    if (enabledServiceInfo.PackageName.Equals(PackageName) && enabledServiceInfo.Name.Equals(typeof(LockAccessibilityService).Name))
+                    {
+                        hasAccessibility = true;
+                        break;
+                    }
+                }
+                return hasAccessibility;
+            }
         }
     }
 }

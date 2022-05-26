@@ -35,10 +35,59 @@ namespace KLauncher
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
             TextViewMenu.Text = "清理";
-            Adapter = new AppItemAdapter(this, Items, false);
+            Adapter = new AppItemAdapter(this, Items);
+            Adapter.ItemLongClick += Adapter_ItemLongClick;
             AppList.Adapter = Adapter;
             TextViewBack.Click += TextViewBack_Click;
             TextViewMenu.Click += TextViewMenu_Click;
+        }
+        private int position;
+        private PopupMenu menu;
+        private void Adapter_ItemLongClick(View view, int position)
+        {
+
+            if (!this.IsFastDoubleClick())
+            {
+                this.position = position;
+                menu = new PopupMenu(this, view);
+                menu.MenuInflater.Inflate(Resource.Menu.clean_menu, menu.Menu);
+                menu.MenuItemClick += PopupMenu_MenuItemClick;
+                menu.DismissEvent += Menu_DismissEvent;
+                menu.Show();
+            }
+        }
+        private void Menu_DismissEvent(object sender, PopupMenu.DismissEventArgs e)
+        {
+            menu.MenuItemClick -= PopupMenu_MenuItemClick;
+            menu.DismissEvent -= Menu_DismissEvent;
+            menu.Dispose();
+        }
+        private void PopupMenu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
+        {
+            switch (e.Item.ItemId)
+            {
+                case Resource.Id.end:
+                    {
+                        if (!this.IsFastDoubleClick())
+                            CleanApp(position);
+                        break;
+                    }
+                case Resource.Id.info:
+                    {
+                        if (!this.IsFastDoubleClick())
+                        {
+                            var packageName = Items.ElementAt(position)?.PackageName;
+                            if (!string.IsNullOrEmpty(packageName))
+                            {
+                                Intent intent = new Intent(Android.Provider.Settings.ActionApplicationDetailsSettings);
+                                intent.AddFlags(ActivityFlags.NewTask);
+                                intent.SetData(Android.Net.Uri.Parse($"package:{packageName}"));
+                                StartActivity(intent);
+                            }
+                        }
+                        break;
+                    }
+            }
         }
         private void TextViewBack_Click(object sender, EventArgs e)
         {
@@ -59,8 +108,11 @@ namespace KLauncher
                         if (!this.IsFastDoubleClick())
                         {
                             var index = AppList.SelectedItemPosition;
-                            var item = Items.ElementAt(index);
-                            this.OpenApp(item.PackageName);
+                            if (index > -1)
+                            {
+                                var item = Items.ElementAt(index);
+                                this.OpenApp(item.PackageName);
+                            }
                         }
                         return true;
                     }
@@ -81,11 +133,14 @@ namespace KLauncher
         }
         private void CleanApp(int index)
         {
-            var packageName = Items.ElementAt(index).PackageName;
-            ((ActivityManager)GetSystemService(ActivityService)).KillBackgroundProcesses(packageName);
-            Items.RemoveAt(index);
-            Adapter.NotifyDataSetChanged();
-            AppList.SetSelection(0);
+            if (index > -1)
+            {
+                var packageName = Items.ElementAt(index).PackageName;
+                ((ActivityManager)GetSystemService(ActivityService)).KillBackgroundProcesses(packageName);
+                Items.RemoveAt(index);
+                Adapter.NotifyDataSetChanged();
+                AppList.SetSelection(0);
+            }
         }
         protected override void OnResume()
         {

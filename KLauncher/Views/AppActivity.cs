@@ -35,7 +35,7 @@ namespace KLauncher
             AppList = FindViewById<ListView>(Resource.Id.appList);
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
-            Adapter = new AppItemAdapter(this, Items, true);
+            Adapter = new AppItemAdapter(this, Items);
             Adapter.ItemClick += Adapter_ItemClick;
             Adapter.ItemLongClick += Adapter_ItemLongClick;
             TextViewBack.Click += TextViewBack_Click;

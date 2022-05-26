@@ -14,8 +14,8 @@ using Java.Lang;
 using Newtonsoft.Json.Linq;
 using Android.Telephony;
 using Java.IO;
-using Exception = System.Exception;
 using System.Text.RegularExpressions;
+using Exception = System.Exception;
 
 namespace KLauncher.Libs
 {

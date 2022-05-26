@@ -1,13 +1,5 @@
 ﻿using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Xamarin.Essentials;
 
 namespace KLauncher
@@ -19,7 +11,7 @@ namespace KLauncher
         {
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
-
+            SetContentView(Resource.Layout.about_view);
         }
     }
 }
