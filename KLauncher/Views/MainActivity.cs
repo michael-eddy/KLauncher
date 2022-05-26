@@ -15,8 +15,10 @@ using Thread = Java.Lang.Thread;
 
 namespace KLauncher
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "android.intent.action.MAIN" }, Categories = new[] { "android.intent.category.HOME", "android.intent.category.DEFAULT", "android.intent.category.LAUNCHER" })]
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, 
+        ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
+    [IntentFilter(new[] { "android.intent.action.MAIN", "android.intent.action.ASSIST" }, 
+        Categories = new[] { "android.intent.category.HOME", "android.intent.category.DEFAULT", "android.intent.category.LAUNCHER" })]
     public sealed class MainActivity : BaseActivity
     {
         private WeatherClient Weather { get; set; }
@@ -169,6 +171,7 @@ namespace KLauncher
                             }
                             else
                             {
+                                //https://github.com/ChenCoin/Lockoo
                                 new AlertDialog.Builder(this)
                                     .SetMessage("需要启动辅助功能才能使用快捷锁屏功能！")
                                     .SetPositiveButton("确定", (_, _) =>
