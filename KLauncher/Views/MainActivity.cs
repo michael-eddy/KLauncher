@@ -34,6 +34,7 @@ namespace KLauncher
         private Thread Thread { get; set; }
         private CleanDialog Dialog { get; set; }
         private TextView TextViewList { get; set; }
+        private TextView TextViewClear { get; set; }
         private TextView TextViewWind { get; set; }
         private TextView TextViewTemp { get; set; }
         private TextView TextViewWeather { get; set; }
@@ -44,12 +45,19 @@ namespace KLauncher
             Dialog = CleanDialog.Instance;
             Dialog.OnHidden += Dialog_OnHidden;
             TextViewList = FindViewById<TextView>(Resource.Id.textViewList);
+            TextViewClear = FindViewById<TextView>(Resource.Id.textViewClear);
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
             TextViewWind = FindViewById<TextView>(Resource.Id.textViewWind);
             TextViewTemp = FindViewById<TextView>(Resource.Id.textViewTemp);
             TextViewWeather = FindViewById<TextView>(Resource.Id.textViewWeather);
             TextViewOperator = FindViewById<TextView>(Resource.Id.textViewOperator);
             TextViewList.Click += TextViewList_Click;
+            TextViewClear.Click += TextViewClear_Click;
+        }
+        private void TextViewClear_Click(object sender, EventArgs e)
+        {
+            if (!this.IsFastDoubleClick())
+                ShowFragment(Dialog, "clean_dialog");
         }
         private void Dialog_OnHidden(object sender) => HideFragment(Dialog);
         private void TextViewList_Click(object sender, EventArgs e)
@@ -160,34 +168,6 @@ namespace KLauncher
                         }
                         return true;
                     }
-                case Keycode.Pound:
-                    {
-                        if (!this.IsFastDoubleClick())
-                        {
-                            if (HasAccessibility)
-                            {
-                                Intent intent = new Intent(LockAccessibilityService.ACTION_LOCK, null, this, typeof(LockAccessibilityService));
-                                StartService(intent);
-                            }
-                            else
-                            {
-                                //https://github.com/ChenCoin/Lockoo
-                                new AlertDialog.Builder(this)
-                                    .SetMessage("需要启动辅助功能才能使用快捷锁屏功能！")
-                                    .SetPositiveButton("确定", (_, _) =>
-                                    {
-                                        Intent intent = new Intent(Android.Provider.Settings.ActionAccessibilitySettings);
-                                        intent.AddFlags(ActivityFlags.NewTask);
-                                        StartActivity(intent);
-                                    })
-                                    .SetNegativeButton("取消", (dialog, _) =>
-                                    {
-                                        (dialog as AlertDialog)?.Dismiss();
-                                    }).Show();
-                            }
-                        }
-                        return true;
-                    }
             }
             return base.DispatchKeyEvent(e);
         }
@@ -215,25 +195,6 @@ namespace KLauncher
             if (PackageReceiver != null)
                 UnregisterReceiver(PackageReceiver);
             base.OnDestroy();
-        }
-        public bool HasAccessibility
-        {
-            get
-            {
-                bool hasAccessibility = false;
-                var accessibilityManager = (AccessibilityManager)GetSystemService(AccessibilityService);
-                var list = accessibilityManager.GetEnabledAccessibilityServiceList(Android.AccessibilityServices.FeedbackFlags.AllMask);
-                foreach (var item in list)
-                {
-                    ServiceInfo enabledServiceInfo = item.ResolveInfo.ServiceInfo;
-                    if (enabledServiceInfo.PackageName.Equals(PackageName) && enabledServiceInfo.Name.Equals(typeof(LockAccessibilityService).Name))
-                    {
-                        hasAccessibility = true;
-                        break;
-                    }
-                }
-                return hasAccessibility;
-            }
         }
     }
 }

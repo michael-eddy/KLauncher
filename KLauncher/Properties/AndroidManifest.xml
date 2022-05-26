@@ -3,18 +3,6 @@
 	<uses-sdk android:minSdkVersion="28" android:targetSdkVersion="28" />
 	<uses-feature android:name="android.software.device_admin" android:required="true" />
 	<application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
-		<activity android:name=".MainActivity">
-			<intent-filter>
-				<action android:name="android.intent.action.MAIN" />
-				<action android:name="android.intent.action.ASSIST" />
-				<category android:name="android.intent.category.HOME" />
-				<category android:name="android.intent.category.DEFAULT" />
-				<category android:name="android.intent.category.LAUNCHER" />
-			</intent-filter>
-			<meta-data
-                android:name="com.android.systemui.action_assist_icon"
-                android:resource="@drawable/ic_quick_foreground" />
-		</activity>
 		<receiver android:name=".PackageReceiver">
 			<intent-filter>
 				<data android:scheme="package" />
@@ -22,23 +10,6 @@
 				<action android:name="android.intent.action.PACKAGE_REMOVED" />
 			</intent-filter>
 		</receiver>
-		<receiver android:name="android.app.admin.DeviceAdminReceiver"
-		   android:description="@string/app_name" android:label="@string/app_name"
-		   android:permission="android.permission.BIND_DEVICE_ADMIN">
-			<meta-data android:name="android.app.device_admin" android:resource="@xml/lock_screen" />
-			<intent-filter>
-				<action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
-			</intent-filter>
-		</receiver>
-		<service android:name=".LockAccessibilityService" android:enabled="true"
-				 android:exported="true" android:label="@string/app_name"
-				 android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
-			<intent-filter>
-				<action android:name="android.accessibilityservice.AccessibilityService" />
-			</intent-filter>
-			<meta-data android:name="android.accessibilityservice"
-					   android:resource="@xml/lock_accessibility" />
-		</service>
 	</application>
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.USE_BIOMETRIC" />

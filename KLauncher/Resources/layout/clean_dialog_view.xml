@@ -1,14 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="24px"
     android:fitsSystemWindows="true">
     <TextView
-        android:gravity="center"
-        android:textSize="16px"
-        android:padding="24px"
-        android:text="21435675432"
+        android:gravity="left"
+        android:textSize="24px"
+        android:text="清理内存"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@android:color/black" />
-</ScrollView>
+        <LinearLayout
+            android:layout_marginTop="36px"
+            android:layout_marginBottom="36px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:textSize="16px"
+                android:text="已用内存"
+                android:id="@+id/textViewUse"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+            <LinearLayout 
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+            <TextView
+                android:textSize="16px"
+                android:text="总内存"
+                android:id="@+id/textViewTotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+        </LinearLayout>
+    <Button
+        android:text="清理"
+        android:gravity="center"
+        android:id="@+id/buttonClear"
+        android:layout_marginLeft="36px"
+        android:layout_marginRight="36px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+</LinearLayout>
