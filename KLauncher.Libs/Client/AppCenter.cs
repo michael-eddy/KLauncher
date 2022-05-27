@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 using KLauncher.Libs.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +56,8 @@ namespace KLauncher.Libs
                         var versionCode = packageInfo.LongVersionCode;
                         var className = packageInfo.ApplicationInfo.ClassName;
                         var packageName = packageInfo.ApplicationInfo.PackageName;
+                        if (packageName.Equals(Context.PackageName, StringComparison.CurrentCultureIgnoreCase))
+                            continue;
                         var drawable = packageInfo.ApplicationInfo.LoadIcon(Context.PackageManager).ToBas64Code();
                         var displayName = packageInfo.ApplicationInfo.LoadLabel(Context.PackageManager);
                         var app = Apps.FirstOrDefault(x => x.PackageName == packageName);

@@ -1,10 +1,12 @@
-﻿using Android.Content;
+﻿using Android.App;
+using Android.Content;
 using KLauncher.Libs;
 using KLauncher.Libs.Models;
 
-namespace KLauncher
+namespace KLauncher.Tasks
 {
-    public sealed class PackageReceiver : BroadcastReceiver
+	[IntentFilter(new[] { "android.intent.action.PACKAGE_ADDED", "android.intent.action.PACKAGE_REMOVED" })]
+	public sealed class PackageReceiver : BroadcastReceiver
 	{
 		public override void OnReceive(Context context, Intent intent)
 		{

@@ -51,7 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Apps\AppCenter.cs" />
+    <Compile Include="Client\AppCenter.cs" />
     <Compile Include="Core\HttpClientEx.cs" />
     <Compile Include="Core\IApiClient.cs" />
     <Compile Include="Core\RestClientEx.cs" />
@@ -67,7 +67,6 @@
     <Compile Include="Models\CacheWeatherInfo.cs" />
     <Compile Include="Models\CityInfo.cs" />
     <Compile Include="Models\Enums.cs" />
-    <Compile Include="Apps\PackageReceiver.cs" />
     <Compile Include="Models\ReturnModel.cs" />
     <Compile Include="Models\Setting.cs" />
     <Compile Include="Models\WeatherInfo.cs" />
