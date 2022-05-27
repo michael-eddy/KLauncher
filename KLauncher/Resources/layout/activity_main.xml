@@ -57,7 +57,7 @@
         android:gravity="bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <TextView
+        <TextView
         android:gravity="left"
         android:text="应用列表"
         android:textSize="16px"
@@ -70,7 +70,7 @@
         android:layout_weight="1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <TextView
+        <TextView
         android:text="清理内存"
         android:gravity="right"
         android:padding="12px"

@@ -15,34 +15,42 @@ namespace KLauncher
         private bool FirstLoad = true;
         private Switch ShowSecSwitch { get; set; }
         private Switch HideAppSwitch { get; set; }
-        private Switch ShellClearSwitch { get; set; }
+        private TextView TextViewSave { get; set; }
         private TextView TextViewBack { get; set; }
+        private EditText EditTextThread { get; set; }
+        private EditText EditTextPercent { get; set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_setting);
+            TextViewSave = FindViewById<TextView>(Resource.Id.textViewSave);
+            TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             ShowSecSwitch = FindViewById<Switch>(Resource.Id.showSecSwitch);
             HideAppSwitch = FindViewById<Switch>(Resource.Id.hideAppSwitch);
-            TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
-            ShellClearSwitch = FindViewById<Switch>(Resource.Id.shellClearSwitch);
+            EditTextThread = FindViewById<EditText>(Resource.Id.editTextThraed);
+            EditTextPercent = FindViewById<EditText>(Resource.Id.editTextPercent);
+            TextViewSave.Click += TextViewSave_Click;
             TextViewBack.Click += TextViewBack_Click;
             HideAppSwitch.CheckedChange += HideAppSwitch_CheckedChange;
             ShowSecSwitch.CheckedChange += ShowSecSwitch_CheckedChange;
-            ShellClearSwitch.CheckedChange += ShellClearSwitch_CheckedChange;
             RunOnUiThread(() =>
             {
                 ShowSecSwitch.Checked = SettingHelper.ShowSec;
-                ShellClearSwitch.Checked = SettingHelper.UseShell;
                 HideAppSwitch.Checked = SettingHelper.ShowHidden;
+                EditTextThread.Text = SettingHelper.CleanThread.ToString();
+                EditTextPercent.Text = (SettingHelper.CleanPercent * 100).ToString();
                 FirstLoad = false;
             });
         }
-        private void ShellClearSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
+        private void TextViewSave_Click(object sender, EventArgs e) => Saved();
+        private void Saved()
         {
-            if (FirstLoad) return;
-            SettingHelper.UseShell = e.IsChecked;
-            this.ShowToast(e.IsChecked ? "启用成功！" : "关闭成功！", ToastLength.Short);
+            uint thread = uint.Parse(EditTextThread.Text), percent = uint.Parse(EditTextPercent.Text);
+            if (thread <= 0) thread = 1;
+            if (percent <= 0) percent = 60;
+            SettingHelper.CleanThread = thread;
+            SettingHelper.CleanPercent = percent / 100;
         }
         private void TextViewBack_Click(object sender, EventArgs e) => Finish();
         private void ShowSecSwitch_CheckedChange(object sender, CompoundButton.CheckedChangeEventArgs e)
@@ -61,6 +69,12 @@ namespace KLauncher
         {
             switch (e.KeyCode)
             {
+                case Keycode.Menu:
+                    {
+                        if (!this.IsFastDoubleClick())
+                            Saved();
+                        break;
+                    }
                 case Keycode.SoftRight:
                     {
                         if (!this.IsFastDoubleClick())

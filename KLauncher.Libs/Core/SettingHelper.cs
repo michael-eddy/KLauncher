@@ -53,23 +53,43 @@ namespace KLauncher.Libs.Core
                 SaveData("ShowSec", value ? "1" : "0");
             }
         }
-        public static bool UseShell
+        public static uint CleanThread
         {
             get
             {
                 try
                 {
-                    GetData("UseShell", out string value);
-                    return value == "1";
+                    GetData("CleanThread", out string value);
+                    uint.TryParse(value, out uint resullt);
+                    if (resullt <= 0) resullt = 1;
+                    return resullt;
                 }
-                catch { return false; }
+                catch { return 1; }
             }
             set
             {
-                SaveData("UseShell", value ? "1" : "0");
+                SaveData("CleanThread", value.ToString());
             }
         }
-        private static bool GetData(string name, out string value)
+        public static double CleanPercent
+        {
+            get
+            {
+                try
+                {
+                    GetData("CleanPercent", out string value);
+                    double.TryParse(value, out double resullt);
+                    if (resullt <= 0) resullt = 0.6;
+                    return resullt;
+                }
+                catch { return 0.6; }
+            }
+            set
+            {
+                SaveData("CleanPercent", value.ToString());
+            }
+        }
+        internal static bool GetData(string name, out string value)
         {
             try
             {
@@ -89,7 +109,7 @@ namespace KLauncher.Libs.Core
                 return false;
             }
         }
-        private static void SaveData(string name, string value)
+        internal static void SaveData(string name, string value)
         {
             try
             {

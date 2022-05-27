@@ -3,10 +3,10 @@ using Android.Content;
 using Android.Content.PM;
 using Android.OS;
 using Android.Views;
-using Android.Views.Accessibility;
 using Android.Widget;
 using KLauncher.Libs;
 using KLauncher.Libs.Client;
+using KLauncher.Libs.Models;
 using KLauncher.Tasks;
 using System;
 using System.Linq;
@@ -97,19 +97,29 @@ namespace KLauncher
                 try
                 {
                     TextViewOperator.Text = this.OperatorName();
-                    var ipString = await Weather.GetIpAddress();
-                    if (!string.IsNullOrEmpty(ipString))
+                    if (Weather.GeCache(out WeatherInfo weather) && weather.IsNotEmpty())
                     {
-                        var cityInfo = await Weather.GetCityCode(ipString);
-                        if (cityInfo != null && cityInfo.Data.Status == 1)
+                        var current = weather.Lives.FirstOrDefault();
+                        TextViewWeather.Text = $"天气 {current.Weather}";
+                        TextViewTemp.Text = $"温度 {current.Temperature}°C";
+                        TextViewWind.Text = $"风向 {current.WindDirection} {current.WindPower}级";
+                    }
+                    else
+                    {
+                        var ipString = await Weather.GetIpAddress();
+                        if (!string.IsNullOrEmpty(ipString))
                         {
-                            var weatherInfo = await Weather.GetWeatherInfo(cityInfo.Data.Adcode);
-                            if (weatherInfo != null && weatherInfo.Data.Status == 1 && weatherInfo.Data.Count > 0)
+                            var cityInfo = await Weather.GetCityCode(ipString);
+                            if (cityInfo != null && cityInfo.Data.Status == 1)
                             {
-                                var current = weatherInfo.Data.Lives.FirstOrDefault();
-                                TextViewWeather.Text = $"天气 {current.Weather}";
-                                TextViewTemp.Text = $"温度 {current.Temperature}°C";
-                                TextViewWind.Text = $"风向 {current.WindDirection} {current.WindPower}级";
+                                var weatherInfo = await Weather.GetWeatherInfo(cityInfo.Data.Adcode);
+                                if (weatherInfo != null && weatherInfo.Data.Status == 1 && weatherInfo.Data.Count > 0)
+                                {
+                                    var current = weatherInfo.Data.Lives.FirstOrDefault();
+                                    TextViewWeather.Text = $"天气 {current.Weather}";
+                                    TextViewTemp.Text = $"温度 {current.Temperature}°C";
+                                    TextViewWind.Text = $"风向 {current.WindDirection} {current.WindPower}级";
+                                }
                             }
                         }
                     }

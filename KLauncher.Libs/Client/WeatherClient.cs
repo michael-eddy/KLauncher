@@ -1,4 +1,5 @@
-﻿using KLauncher.Libs.Models;
+﻿using KLauncher.Libs.Core;
+using KLauncher.Libs.Models;
 using System;
 using System.Threading.Tasks;
 
@@ -6,7 +7,26 @@ namespace KLauncher.Libs.Client
 {
     public sealed class WeatherClient : BaseClient
     {
+        private const string DB_KEY = "weather";
         private const string API_KEY = "1502b6fccfd45618a92ea9128471c8d5";
+        public bool GeCache(out WeatherInfo weatherInfo)
+        {
+            weatherInfo = default;
+            try
+            {
+                if (SettingHelper.GetData(DB_KEY, out string jsonData) && !string.IsNullOrEmpty(jsonData))
+                {
+                    var cacheWeather = jsonData.ParseObject<CacheWeatherInfo>();
+                    if (cacheWeather.WeatherInfo != null && cacheWeather.WeatherInfo.Status == 1 && cacheWeather.WeatherInfo.Count > 0)
+                    {
+                        weatherInfo = cacheWeather.WeatherInfo;
+                        return true;
+                    }
+                }
+            }
+            catch { }
+            return false;
+        }
         public async Task<string> GetIpAddress()
         {
             try
@@ -37,10 +57,10 @@ namespace KLauncher.Libs.Client
         {
             try
             {
-                string url = string.Format("https://restapi.amap.com/v3/weather/weatherInfo?key={0}&city={1}",
-                   API_KEY, cityNo);
+                string url = string.Format("https://restapi.amap.com/v3/weather/weatherInfo?key={0}&city={1}", API_KEY, cityNo);
                 var result = await ApiClient.GetResults(url).ConfigureAwait(false);
                 var m = result.ParseObject<WeatherInfo>();
+                SettingHelper.SaveData(DB_KEY, new CacheWeatherInfo(m).ToString());
                 return BuildSuccessResult(m);
             }
             catch (Exception ex)

@@ -11,15 +11,14 @@ namespace KLauncher.Tasks
 {
     public sealed class CleanerThread : Thread
     {
-        private const string DllName = "libcleaner.so";
-        [DllImport(DllName, EntryPoint = "cleaner")]
-        private static extern int cleaner(long l);
         private Context Context { get; }
+        private readonly uint thread;
         private readonly double eatpercent;
         private readonly long totalMemory;
-        public CleanerThread(Context context, double eatpercent)
+        public CleanerThread(Context context, double eatpercent, uint thread)
         {
             Context = context;
+            this.thread = thread;
             this.eatpercent = eatpercent;
             totalMemory = context.GetTotalMemory();
         }
@@ -27,13 +26,9 @@ namespace KLauncher.Tasks
         {
             try
             {
-                if (SettingHelper.UseShell)
-                {
-                    Runtime runtime = Runtime.GetRuntime();
-                    runtime.Exec($"{Context.ApplicationInfo.NativeLibraryDir}/libcleaner.so {totalMemory * eatpercent}");
-                }
-                else
-                    cleaner(Convert.ToInt64(totalMemory * eatpercent));
+                Runtime runtime = Runtime.GetRuntime();
+                var value = totalMemory * eatpercent / thread;
+                runtime.Exec($"{Context.ApplicationInfo.NativeLibraryDir}/libcleaner.so {value}");
             }
             catch (Exception ex)
             {

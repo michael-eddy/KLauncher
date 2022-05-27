@@ -16,6 +16,7 @@ using Android.Telephony;
 using Java.IO;
 using System.Text.RegularExpressions;
 using Exception = System.Exception;
+using Android.App;
 
 namespace KLauncher.Libs
 {
@@ -34,6 +35,18 @@ namespace KLauncher.Libs
             }
             return default;
         }
+        public static string ToJson(this object obj)
+        {
+            try
+            {
+                return JsonConvert.SerializeObject(obj);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("ToJson", ex);
+            }
+            return string.Empty;
+        }
         public static T ParseObject<T>(this string json)
         {
             try
@@ -45,6 +58,13 @@ namespace KLauncher.Libs
                 LogManager.Instance.LogError("ToObject", ex);
             }
             return default;
+        }
+        public static long GetAvailMemory(this Context context)
+        {
+            ActivityManager am = (ActivityManager)context.GetSystemService(Context.ActivityService);
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            am.GetMemoryInfo(mi);
+            return mi.AvailMem;
         }
         public static long GetTotalMemory(this Context _)
         {

@@ -80,6 +80,8 @@
     <Compile Include="Adapters\AppItemAdapter.cs" />
     <Compile Include="Adapters\ViewHolderBox.cs" />
     <Compile Include="Tasks\CleanerThread.cs" />
+    <Compile Include="Tasks\MemoryHandler.cs" />
+    <Compile Include="Tasks\MemoryThread.cs" />
     <Compile Include="Views\AboutActivity.cs" />
     <Compile Include="Views\AppActivity.cs" />
     <Compile Include="Views\CleanActivity.cs" />
