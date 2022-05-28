@@ -80,7 +80,6 @@
   <ItemGroup>
     <Compile Include="Adapters\AppItemAdapter.cs" />
     <Compile Include="Adapters\ViewHolderBox.cs" />
-    <Compile Include="Tasks\PackageReceiver.cs" />
     <Compile Include="Tasks\CleanerThread.cs" />
     <Compile Include="Tasks\MemoryHandler.cs" />
     <Compile Include="Tasks\MemoryThread.cs" />

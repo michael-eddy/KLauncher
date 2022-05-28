@@ -6,6 +6,9 @@ using AndroidX.Fragment.App;
 using KLauncher.Libs;
 using KLauncher.Tasks;
 using KLauncher.Libs.Core;
+using Android.Graphics.Drawables;
+using Android.Util;
+using Android.Graphics;
 
 namespace KLauncher
 {
@@ -42,6 +45,17 @@ namespace KLauncher
             ButtonClear.Click += ButtonClear_Click;
             return View;
         }
+        public override void OnStart()
+        {
+            base.OnStart();
+            var win = Dialog.Window;
+            win.SetBackgroundDrawable(new ColorDrawable(Color.WhiteSmoke));
+            DisplayMetrics dm = new DisplayMetrics();
+            Activity.WindowManager.DefaultDisplay.GetMetrics(dm);
+            win.Attributes.Gravity = GravityFlags.Bottom;
+            win.Attributes.Width = ViewGroup.LayoutParams.MatchParent;
+            win.Attributes.Height = ViewGroup.LayoutParams.WrapContent;
+        }
         public override void OnResume()
         {
             base.OnResume();
@@ -62,6 +76,7 @@ namespace KLauncher
                 Thread.Dispose();
             }
             catch { }
+            base.OnPause();
         }
         private void ButtonClear_Click(object sender, EventArgs e)
         {
