@@ -15,14 +15,14 @@ using Xamarin.Essentials;
 namespace KLauncher
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme")]
-    public sealed class CleanActivity : BaseActivity
+    public sealed class RunningActivity : BaseActivity
     {
         public List<AppItem> Items { get; }
         private ListView AppList { get; set; }
         private TextView TextViewBack { get; set; }
         private TextView TextViewMenu { get; set; }
         private AppItemAdapter Adapter { get; set; }
-        public CleanActivity()
+        public RunningActivity()
         {
             Items = new List<AppItem>();
         }
@@ -50,7 +50,7 @@ namespace KLauncher
             {
                 this.position = position;
                 menu = new PopupMenu(this, view);
-                menu.MenuInflater.Inflate(Resource.Menu.clean_menu, menu.Menu);
+                menu.MenuInflater.Inflate(Resource.Menu.runing_menu, menu.Menu);
                 menu.MenuItemClick += PopupMenu_MenuItemClick;
                 menu.DismissEvent += Menu_DismissEvent;
                 menu.Show();
@@ -66,6 +66,12 @@ namespace KLauncher
         {
             switch (e.Item.ItemId)
             {
+                case Resource.Id.runing:
+                    {
+                        if (!this.IsFastDoubleClick())
+                            OpenApp(position);
+                        break;
+                    }
                 case Resource.Id.end:
                     {
                         if (!this.IsFastDoubleClick())
@@ -106,14 +112,7 @@ namespace KLauncher
                 case Keycode.DpadCenter:
                     {
                         if (!this.IsFastDoubleClick())
-                        {
-                            var index = AppList.SelectedItemPosition;
-                            if (index > -1)
-                            {
-                                var item = Items.ElementAt(index);
-                                this.OpenApp(item.PackageName);
-                            }
-                        }
+                            OpenApp(AppList.SelectedItemPosition);
                         return true;
                     }
                 case Keycode.SoftRight:
@@ -130,6 +129,14 @@ namespace KLauncher
                     }
             }
             return base.DispatchKeyEvent(e);
+        }
+        private void OpenApp(int position)
+        {
+            if (position > -1)
+            {
+                var item = Items.ElementAt(position);
+                this.OpenApp(item);
+            }
         }
         private void CleanApp(int index)
         {
@@ -156,11 +163,9 @@ namespace KLauncher
             var localList = PackageManager.GetInstalledPackages(0);
             for (int i = 0; i < localList.Count; i++)
             {
-                var localPackageInfo1 = localList.ElementAt(i);
-                if (((ApplicationInfoFlags.System & localPackageInfo1.ApplicationInfo.Flags) == 0)
-                        && ((ApplicationInfoFlags.UpdatedSystemApp & localPackageInfo1.ApplicationInfo.Flags) == 0)
-                        && ((ApplicationInfoFlags.Stopped & localPackageInfo1.ApplicationInfo.Flags) == 0))
-                    packages.Add(localPackageInfo1.PackageName.Split(":").FirstOrDefault());
+                var localPackageInfo = localList.ElementAt(i);
+                if ((ApplicationInfoFlags.Stopped & localPackageInfo.ApplicationInfo.Flags) == 0)
+                    packages.Add(localPackageInfo.PackageName.Split(":").FirstOrDefault());
             }
             return AppCenter.Instance.Take(packages);
         }

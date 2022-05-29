@@ -35,10 +35,7 @@ namespace KLauncher.Libs
             Intent = new Intent(Intent.ActionMain, null);
             Intent.AddCategory(Intent.CategoryLauncher);
         }
-        public IEnumerable<AppItem> Take(IEnumerable<string> packages)
-        {
-            return Apps.Where(x => packages.Contains(x.PackageName));
-        }
+        public IEnumerable<AppItem> Take(IEnumerable<string> packages) => Apps.Where(x => packages.Contains(x.PackageName));
         public void UpdateList()
         {
             if (IsComplete) return;
@@ -66,6 +63,7 @@ namespace KLauncher.Libs
                             if (versionCode != app.VersionCode)
                             {
                                 app.Icon = drawable;
+                                app.ClassName = className;
                                 app.VersionCode = versionCode;
                                 app.DisplayName = displayName;
                                 SaveAsync(app);
@@ -77,6 +75,7 @@ namespace KLauncher.Libs
                             {
                                 IsVisable = true,
                                 Icon = drawable,
+                                ClassName = className,
                                 VersionCode = versionCode,
                                 DisplayName = displayName,
                                 PackageName = packageName,
@@ -120,6 +119,7 @@ namespace KLauncher.Libs
                         appItem.Icon = app.Icon;
                         appItem.IsSystem = app.IsSystem;
                         appItem.IsVisable = app.IsVisable;
+                        appItem.ClassName = app.ClassName;
                         appItem.VersionCode = app.VersionCode;
                         appItem.DisplayName = app.DisplayName;
                         DB.Connection.Update(appItem);
@@ -146,10 +146,12 @@ namespace KLauncher.Libs
                         case UpdateType.Add:
                             {
                                 var versionCode = packageInfo.LongVersionCode;
+                                var className = packageInfo.ApplicationInfo.ClassName;
                                 var drawable = packageInfo.ApplicationInfo.LoadIcon(Context.PackageManager);
                                 var app = new AppItem
                                 {
                                     IsVisable = true,
+                                    ClassName = className,
                                     VersionCode = versionCode,
                                     PackageName = packageName,
                                     Icon = drawable.ToBas64Code(),
@@ -162,6 +164,7 @@ namespace KLauncher.Libs
                                 else
                                 {
                                     appItem.Icon = app.Icon;
+                                    appItem.ClassName = app.ClassName;
                                     appItem.VersionCode = app.VersionCode;
                                     appItem.DisplayName = app.DisplayName;
                                 }
@@ -176,7 +179,7 @@ namespace KLauncher.Libs
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 LogManager.Instance.LogError("UpdateOne", ex);
             }

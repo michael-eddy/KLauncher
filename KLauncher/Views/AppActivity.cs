@@ -91,7 +91,7 @@ namespace KLauncher
             var position = sender.ToInt32();
             var item = Items.ElementAt(position);
             if (item != null)
-                this.OpenApp(item.PackageName);
+                this.OpenApp(item);
         }
         private void Instance_AppUpdate(object sender) => AppUpdate();
         private void AppUpdate()
@@ -170,11 +170,11 @@ namespace KLauncher
                         }
                         break;
                     }
-                case Resource.Id.clear:
+                case Resource.Id.runing:
                     {
                         if (!this.IsFastDoubleClick())
                         {
-                            Intent intent = new Intent(this, typeof(CleanActivity));
+                            Intent intent = new Intent(this, typeof(RunningActivity));
                             StartActivity(intent);
                         }
                         break;
