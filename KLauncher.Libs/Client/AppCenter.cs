@@ -2,6 +2,7 @@
 using Android.Content;
 using Android.Content.PM;
 using KLauncher.Libs.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,10 +35,7 @@ namespace KLauncher.Libs
             Intent = new Intent(Intent.ActionMain, null);
             Intent.AddCategory(Intent.CategoryLauncher);
         }
-        public IEnumerable<AppItem> Take(IEnumerable<string> packages)
-        {
-            return Apps.Where(x => packages.Contains(x.PackageName));
-        }
+        public IEnumerable<AppItem> Take(IEnumerable<string> packages) => Apps.Where(x => packages.Contains(x.PackageName));
         public void UpdateList()
         {
             if (IsComplete) return;
@@ -55,6 +53,8 @@ namespace KLauncher.Libs
                         var versionCode = packageInfo.LongVersionCode;
                         var className = packageInfo.ApplicationInfo.ClassName;
                         var packageName = packageInfo.ApplicationInfo.PackageName;
+                        if (packageName.Equals(Context.PackageName, StringComparison.CurrentCultureIgnoreCase))
+                            continue;
                         var drawable = packageInfo.ApplicationInfo.LoadIcon(Context.PackageManager).ToBas64Code();
                         var displayName = packageInfo.ApplicationInfo.LoadLabel(Context.PackageManager);
                         var app = Apps.FirstOrDefault(x => x.PackageName == packageName);
@@ -63,6 +63,7 @@ namespace KLauncher.Libs
                             if (versionCode != app.VersionCode)
                             {
                                 app.Icon = drawable;
+                                app.ClassName = className;
                                 app.VersionCode = versionCode;
                                 app.DisplayName = displayName;
                                 SaveAsync(app);
@@ -74,6 +75,7 @@ namespace KLauncher.Libs
                             {
                                 IsVisable = true,
                                 Icon = drawable,
+                                ClassName = className,
                                 VersionCode = versionCode,
                                 DisplayName = displayName,
                                 PackageName = packageName,
@@ -92,69 +94,94 @@ namespace KLauncher.Libs
         {
             Task.Factory.StartNew(() =>
             {
-                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == packageName);
-                if (appItem != null)
-                    DB.Connection.Delete(appItem);
-                AppUpdate?.Invoke(this);
+                try
+                {
+                    var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == packageName);
+                    if (appItem != null)
+                        DB.Connection.Delete(appItem);
+                    AppUpdate?.Invoke(this);
+                }
+                catch (Exception ex)
+                {
+                    LogManager.Instance.LogError("Remove", ex);
+                }
             });
         }
         public void SaveAsync(AppItem app)
         {
             Task.Factory.StartNew(() =>
             {
-                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
-                if (appItem != null)
+                try
                 {
-                    appItem.Icon = app.Icon;
-                    appItem.IsSystem = app.IsSystem;
-                    appItem.IsVisable = app.IsVisable;
-                    appItem.VersionCode = app.VersionCode;
-                    appItem.DisplayName = app.DisplayName;
-                    DB.Connection.Update(appItem);
+                    var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
+                    if (appItem != null)
+                    {
+                        appItem.Icon = app.Icon;
+                        appItem.IsSystem = app.IsSystem;
+                        appItem.IsVisable = app.IsVisable;
+                        appItem.ClassName = app.ClassName;
+                        appItem.VersionCode = app.VersionCode;
+                        appItem.DisplayName = app.DisplayName;
+                        DB.Connection.Update(appItem);
+                    }
+                    else
+                        DB.Connection.Insert(app);
+                    AppUpdate?.Invoke(this);
                 }
-                else
-                    DB.Connection.Insert(app);
-                AppUpdate?.Invoke(this);
+                catch (Exception ex)
+                {
+                    LogManager.Instance.LogError("SaveAsync", ex);
+                }
             });
         }
         public void UpdateOne(string packageName, UpdateType updateType)
         {
-            var packageInfo = Context.PackageManager.GetPackageInfo(packageName, PackageInfoFlags.Activities);
-            if (packageInfo != null)
+            try
             {
-                switch (updateType)
+                var packageInfo = Context.PackageManager.GetPackageInfo(packageName, PackageInfoFlags.Activities);
+                if (packageInfo != null)
                 {
-                    case UpdateType.Add:
-                        {
-                            var versionCode = packageInfo.LongVersionCode;
-                            var drawable = packageInfo.ApplicationInfo.LoadIcon(Context.PackageManager);
-                            var app = new AppItem
+                    switch (updateType)
+                    {
+                        case UpdateType.Add:
                             {
-                                IsVisable = true,
-                                VersionCode = versionCode,
-                                PackageName = packageName,
-                                Icon = drawable.ToBas64Code(),
-                                IsSystem = packageInfo.ApplicationInfo.IsSystem(),
-                                DisplayName = packageInfo.ApplicationInfo.LoadLabel(Context.PackageManager)
-                            };
-                            var appItem = Apps.FirstOrDefault(x => x.PackageName == packageName);
-                            if (appItem == null)
-                                Apps.Add(app);
-                            else
-                            {
-                                appItem.Icon = app.Icon;
-                                appItem.VersionCode = app.VersionCode;
-                                appItem.DisplayName = app.DisplayName;
+                                var versionCode = packageInfo.LongVersionCode;
+                                var className = packageInfo.ApplicationInfo.ClassName;
+                                var drawable = packageInfo.ApplicationInfo.LoadIcon(Context.PackageManager);
+                                var app = new AppItem
+                                {
+                                    IsVisable = true,
+                                    ClassName = className,
+                                    VersionCode = versionCode,
+                                    PackageName = packageName,
+                                    Icon = drawable.ToBas64Code(),
+                                    IsSystem = packageInfo.ApplicationInfo.IsSystem(),
+                                    DisplayName = packageInfo.ApplicationInfo.LoadLabel(Context.PackageManager)
+                                };
+                                var appItem = Apps.FirstOrDefault(x => x.PackageName == packageName);
+                                if (appItem == null)
+                                    Apps.Add(app);
+                                else
+                                {
+                                    appItem.Icon = app.Icon;
+                                    appItem.ClassName = app.ClassName;
+                                    appItem.VersionCode = app.VersionCode;
+                                    appItem.DisplayName = app.DisplayName;
+                                }
+                                SaveAsync(app);
+                                break;
                             }
-                            SaveAsync(app);
-                            break;
-                        }
-                    case UpdateType.Remove:
-                        {
-                            Remove(packageName);
-                            break;
-                        }
+                        case UpdateType.Remove:
+                            {
+                                Remove(packageName);
+                                break;
+                            }
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("UpdateOne", ex);
             }
         }
     }

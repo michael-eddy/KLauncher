@@ -8,21 +8,32 @@ using Android.Widget;
 using Android.OS;
 using FFImageLoading;
 using FFImageLoading.Cache;
-using System.Linq;
 using Newtonsoft.Json;
 using Java.Lang;
 using Newtonsoft.Json.Linq;
 using Android.Telephony;
 using Java.IO;
 using System.Text.RegularExpressions;
-using Exception = System.Exception;
 using Android.App;
+using KLauncher.Libs.Models;
+using System.Collections.Generic;
+using Android;
+using AndroidX.Core.Content;
+using Exception = System.Exception;
 
 namespace KLauncher.Libs
 {
     public static class Extension
     {
         public static long ClickTime { get; set; }
+        public static void RequestPermission(this Activity activity)
+        {
+            var permissions = new List<string>();
+            if (ContextCompat.CheckSelfPermission(activity, Manifest.Permission.ReadPhoneState) == Permission.Denied)
+                permissions.Add(Manifest.Permission.ReadPhoneState);
+            if (permissions.Count > 0)
+                activity.RequestPermissions(permissions.ToArray(), 1);
+        }
         public static JObject ParseJObject(this string json)
         {
             try
@@ -93,32 +104,15 @@ namespace KLauncher.Libs
                 _ => "其他",
             };
         }
-        public static bool OpenApp(this Context context, string packageName)
+        public static bool OpenApp(this Context context, AppItem appItem)
         {
             try
             {
+                var className = appItem.ClassName;
+                var packageName = appItem.PackageName;
                 PackageManager manager = context.PackageManager;
-                Intent intent = new Intent(Intent.ActionMain);
-                intent.AddCategory(Intent.CategoryLauncher);
-                intent.SetPackage(packageName);
-                var apps = manager.QueryIntentActivities(intent, 0);
-                if (apps.Count > 0)
-                {
-                    ResolveInfo ri = apps.FirstOrDefault();
-                    string className = ri.ActivityInfo.Name;
-                    if (className.Split('.').Length > 2)
-                    {
-                        ComponentName cn = new ComponentName(packageName, className);
-                        intent.SetComponent(cn);
-                        context.StartActivity(intent);
-                    }
-                    else
-                    {
-                        intent = manager.GetLaunchIntentForPackage(packageName);
-                        if (intent != null)
-                            context.StartActivity(intent);
-                    }
-                }
+                Intent intent = manager.GetLaunchIntentForPackage(packageName);
+                context.StartActivity(intent);
                 return true;
             }
             catch { }

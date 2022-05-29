@@ -4,20 +4,41 @@ using Android.OS;
 using Android.Views;
 using AndroidX.AppCompat.App;
 using AndroidX.Fragment.App;
+using System;
 
 namespace KLauncher.Libs
 {
     public abstract class BaseActivity : AppCompatActivity
     {
+        protected PackageReceiver Receiver { get; private set; }
         protected override void OnStart()
         {
             base.OnStart();
             Window.SetStatusBarColor(Color.Transparent);
+            try
+            {
+                Receiver = new PackageReceiver();
+                IntentFilter filter = new IntentFilter();
+                filter.AddAction("android.intent.action.PACKAGE_ADDED");
+                filter.AddAction("android.intent.action.PACKAGE_REMOVED");
+                filter.AddDataScheme("package");
+                RegisterReceiver(Receiver, filter);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("PackageReceiver", ex);
+            }
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             ClearFragments();
+        }
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (Receiver != null)
+                UnregisterReceiver(Receiver);
         }
         public override void StartActivity(Intent intent)
         {

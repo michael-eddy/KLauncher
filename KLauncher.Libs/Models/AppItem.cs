@@ -14,5 +14,6 @@ namespace KLauncher.Libs.Models
         public long VersionCode { get; set; }
         public bool IsVisable { get; set; }
         public bool IsSystem { get; set; }
+        public string ClassName { get; set; }
     }
 }

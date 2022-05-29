@@ -30,6 +30,7 @@ namespace KLauncher
             SetContentView(Resource.Layout.activity_main);
             AppCenter.Instance.UpdateList();
             RunOnUiThread(InitControls);
+            this.RequestPermission();
         }
         private Thread Thread { get; set; }
         private CleanDialog Dialog { get; set; }
