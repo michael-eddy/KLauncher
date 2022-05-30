@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using KLauncher.Libs.Core;
 using KLauncher.Libs.Models;
 using System;
 using System.Collections.Generic;
@@ -35,6 +36,7 @@ namespace KLauncher.Libs
             Intent = new Intent(Intent.ActionMain, null);
             Intent.AddCategory(Intent.CategoryLauncher);
         }
+        public IEnumerable<AppItem> Take() => Apps.Where(x => !SettingHelper.ShowHidden || x.IsVisable);
         public IEnumerable<AppItem> Take(IEnumerable<string> packages) => Apps.Where(x => packages.Contains(x.PackageName));
         public void UpdateList()
         {
@@ -92,58 +94,56 @@ namespace KLauncher.Libs
         }
         private void Remove(string packageName)
         {
-            Task.Factory.StartNew(() =>
+            try
             {
-                try
+                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == packageName);
+                if (appItem != null)
                 {
-                    var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == packageName);
-                    if (appItem != null)
-                        DB.Connection.Delete(appItem);
-                    AppUpdate?.Invoke(this);
+                    var removeIdx = Apps.FindIndex(x => x.PackageName == packageName);
+                    Apps.RemoveAt(removeIdx);
+                    DB.Connection.Delete(appItem);
                 }
-                catch (Exception ex)
-                {
-                    LogManager.Instance.LogError("Remove", ex);
-                }
-            });
+                AppUpdate?.Invoke(this);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("Remove", ex);
+            }
         }
         public void SaveAsync(AppItem app)
         {
-            Task.Factory.StartNew(() =>
+            try
             {
-                try
+                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
+                if (appItem != null)
                 {
-                    var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
-                    if (appItem != null)
-                    {
-                        appItem.Icon = app.Icon;
-                        appItem.IsSystem = app.IsSystem;
-                        appItem.IsVisable = app.IsVisable;
-                        appItem.ClassName = app.ClassName;
-                        appItem.VersionCode = app.VersionCode;
-                        appItem.DisplayName = app.DisplayName;
-                        DB.Connection.Update(appItem);
-                    }
-                    else
-                        DB.Connection.Insert(app);
-                    AppUpdate?.Invoke(this);
+                    appItem.Icon = app.Icon;
+                    appItem.IsSystem = app.IsSystem;
+                    appItem.IsVisable = app.IsVisable;
+                    appItem.ClassName = app.ClassName;
+                    appItem.VersionCode = app.VersionCode;
+                    appItem.DisplayName = app.DisplayName;
+                    DB.Connection.Update(appItem);
                 }
-                catch (Exception ex)
-                {
-                    LogManager.Instance.LogError("SaveAsync", ex);
-                }
-            });
+                else
+                    DB.Connection.Insert(app);
+                AppUpdate?.Invoke(this);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("SaveAsync", ex);
+            }
         }
         public void UpdateOne(string packageName, UpdateType updateType)
         {
             try
             {
-                var packageInfo = Context.PackageManager.GetPackageInfo(packageName, PackageInfoFlags.Activities);
-                if (packageInfo != null)
+                switch (updateType)
                 {
-                    switch (updateType)
-                    {
-                        case UpdateType.Add:
+                    case UpdateType.Add:
+                        {
+                            var packageInfo = Context.PackageManager.GetPackageInfo(packageName, PackageInfoFlags.Activities);
+                            if (packageInfo != null)
                             {
                                 var versionCode = packageInfo.LongVersionCode;
                                 var className = packageInfo.ApplicationInfo.ClassName;
@@ -169,14 +169,14 @@ namespace KLauncher.Libs
                                     appItem.DisplayName = app.DisplayName;
                                 }
                                 SaveAsync(app);
-                                break;
                             }
-                        case UpdateType.Remove:
-                            {
-                                Remove(packageName);
-                                break;
-                            }
-                    }
+                            break;
+                        }
+                    case UpdateType.Remove:
+                        {
+                            Remove(packageName);
+                            break;
+                        }
                 }
             }
             catch (Exception ex)

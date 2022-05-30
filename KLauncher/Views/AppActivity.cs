@@ -5,7 +5,6 @@ using Android.Views;
 using Android.Widget;
 using KLauncher.Adapters;
 using KLauncher.Libs;
-using KLauncher.Libs.Core;
 using KLauncher.Libs.Models;
 using System;
 using System.Collections.Generic;
@@ -64,7 +63,7 @@ namespace KLauncher
             {
                 menu = new PopupMenu(this, TextViewMenu);
                 menu.MenuInflater.Inflate(Resource.Menu.view_menu, menu.Menu);
-                menu.MenuItemClick += PopupMenu_MenuItemClick;
+                menu.MenuItemClick += Menu_MenuItemClick;
                 menu.DismissEvent += Menu_DismissEvent;
                 menu.Show();
             }
@@ -76,13 +75,13 @@ namespace KLauncher
             this.position = position;
             menu = new PopupMenu(this, sender);
             menu.MenuInflater.Inflate(Resource.Menu.app_menu, menu.Menu);
-            menu.MenuItemClick += PopupMenu_MenuItemClick;
+            menu.MenuItemClick += Menu_MenuItemClick;
             menu.DismissEvent += Menu_DismissEvent;
             menu.Show();
         }
         private void Menu_DismissEvent(object sender, PopupMenu.DismissEventArgs e)
         {
-            menu.MenuItemClick -= PopupMenu_MenuItemClick;
+            menu.MenuItemClick -= Menu_MenuItemClick;
             menu.DismissEvent -= Menu_DismissEvent;
             menu.Dispose();
         }
@@ -98,13 +97,14 @@ namespace KLauncher
         {
             try
             {
-                IEnumerable<AppItem> appItems = AppCenter.Instance.Apps;
-                if (!SettingHelper.ShowHidden)
-                    appItems = appItems.Where(x => x.IsVisable);
+                var appItems = AppCenter.Instance.Take();
                 Items.Clear();
                 Items.AddRange(appItems);
                 Adapter.NotifyDataSetChanged();
-                AppList.SetSelection(0);
+                RunOnUiThread(() =>
+                {
+                    AppList.SetSelection(0);
+                });
             }
             catch (Exception ex)
             {
@@ -137,12 +137,12 @@ namespace KLauncher
                     }
                 case Keycode.Menu:
                     {
-                        Thread.Sleep(100);
                         if (!this.IsFastDoubleClick())
                         {
+                            Thread.Sleep(200);
                             menu = new PopupMenu(this, TextViewMenu);
                             menu.MenuInflater.Inflate(Resource.Menu.view_menu, menu.Menu);
-                            menu.MenuItemClick += PopupMenu_MenuItemClick;
+                            menu.MenuItemClick += Menu_MenuItemClick;
                             menu.DismissEvent += Menu_DismissEvent;
                             menu.Show();
                         }
@@ -151,7 +151,7 @@ namespace KLauncher
             }
             return base.DispatchKeyEvent(e);
         }
-        private void PopupMenu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
+        private void Menu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
         {
             switch (e.Item.ItemId)
             {
