@@ -1,6 +1,7 @@
 ﻿using KLauncher.Libs.Core;
 using KLauncher.Libs.Models;
 using System;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace KLauncher.Libs.Client
@@ -17,7 +18,9 @@ namespace KLauncher.Libs.Client
                 if (SettingHelper.GetData(DB_KEY, out string jsonData) && !string.IsNullOrEmpty(jsonData))
                 {
                     var cacheWeather = jsonData.ParseObject<CacheWeatherInfo>();
-                    if (cacheWeather.WeatherInfo != null && cacheWeather.WeatherInfo.Status == 1 && cacheWeather.WeatherInfo.Count > 0)
+                    if (DateTime.TryParseExact(cacheWeather.Time, "yyyyMMdd", new CultureInfo("zh-CN"), DateTimeStyles.None, out DateTime dateTime)
+                      && dateTime.Date == DateTime.Now.Date && cacheWeather.WeatherInfo != null && cacheWeather.WeatherInfo.Status == 1
+                      && cacheWeather.WeatherInfo.Count > 0)
                     {
                         weatherInfo = cacheWeather.WeatherInfo;
                         return true;

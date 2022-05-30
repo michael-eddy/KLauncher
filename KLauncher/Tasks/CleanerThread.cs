@@ -2,9 +2,6 @@
 using Android.Widget;
 using Java.Lang;
 using KLauncher.Libs;
-using KLauncher.Libs.Core;
-using System;
-using System.Runtime.InteropServices;
 using Exception = System.Exception;
 
 namespace KLauncher.Tasks

@@ -15,9 +15,9 @@ using Thread = Java.Lang.Thread;
 
 namespace KLauncher
 {
-    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true, 
+    [Activity(Label = "@string/app_name", Theme = "@style/AppTheme", MainLauncher = true,
         ConfigurationChanges = ConfigChanges.Locale | ConfigChanges.Navigation | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "android.intent.action.MAIN", "android.intent.action.ASSIST" }, 
+    [IntentFilter(new[] { "android.intent.action.MAIN", "android.intent.action.ASSIST" },
         Categories = new[] { "android.intent.category.HOME", "android.intent.category.DEFAULT", "android.intent.category.LAUNCHER" })]
     public sealed class MainActivity : BaseActivity
     {
@@ -44,7 +44,6 @@ namespace KLauncher
         private void InitControls()
         {
             Dialog = CleanDialog.Instance;
-            Dialog.OnHidden += Dialog_OnHidden;
             TextViewList = FindViewById<TextView>(Resource.Id.textViewList);
             TextViewClear = FindViewById<TextView>(Resource.Id.textViewClear);
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
@@ -60,7 +59,6 @@ namespace KLauncher
             if (!this.IsFastDoubleClick())
                 ShowFragment(Dialog, "clean_dialog");
         }
-        private void Dialog_OnHidden(object sender) => HideFragment(Dialog);
         private void TextViewList_Click(object sender, EventArgs e)
         {
             if (!this.IsFastDoubleClick())

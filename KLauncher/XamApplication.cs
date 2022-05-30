@@ -7,13 +7,10 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-#if DEBUG
-[Application(Debuggable = true, UsesCleartextTraffic = true)]
-#else
 [Application(Debuggable = false, UsesCleartextTraffic = true)]
-#endif
 public class XamApplication : Application
 {
+    protected PackageReceiver Receiver { get; private set; }
     public XamApplication(IntPtr handle, JniHandleOwnership ownerShip) : base(handle, ownerShip) { }
     public override void OnCreate()
     {
@@ -27,6 +24,36 @@ public class XamApplication : Application
         catch (Exception ex)
         {
             LogManager.Instance.LogError("Register", ex);
+        }
+        RegistPackageReceiver();
+    }
+    private void RegistPackageReceiver()
+    {
+        try
+        {
+            Receiver = new PackageReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.AddAction("android.intent.action.PACKAGE_ADDED");
+            filter.AddAction("android.intent.action.PACKAGE_REMOVED");
+            filter.AddDataScheme("package");
+            RegisterReceiver(Receiver, filter);
+        }
+        catch (Exception ex)
+        {
+            LogManager.Instance.LogError("PackageReceiver", ex);
+        }
+    }
+    public override void OnTerminate()
+    {
+        base.OnTerminate();
+        try
+        {
+            if (Receiver != null)
+                UnregisterReceiver(Receiver);
+        }
+        catch (Exception ex)
+        {
+            LogManager.Instance.LogError("PackageReceiver", ex);
         }
     }
     private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

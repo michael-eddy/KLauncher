@@ -30,7 +30,6 @@ namespace KLauncher
             }
         }
         private new View View { get; set; }
-        public event CallbackObject OnHidden;
         private MemoryThread Thread { get; set; }
         public Button ButtonClear { get; private set; }
         public TextView TextViewUse { get; private set; }

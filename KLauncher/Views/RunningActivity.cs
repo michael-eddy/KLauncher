@@ -10,6 +10,7 @@ using KLauncher.Libs.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using Xamarin.Essentials;
 
 namespace KLauncher
@@ -34,7 +35,6 @@ namespace KLauncher
             AppList = FindViewById<ListView>(Resource.Id.appList);
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
-            TextViewMenu.Text = "清理";
             Adapter = new AppItemAdapter(this, Items);
             Adapter.ItemLongClick += Adapter_ItemLongClick;
             AppList.Adapter = Adapter;
@@ -45,28 +45,27 @@ namespace KLauncher
         private PopupMenu menu;
         private void Adapter_ItemLongClick(View view, int position)
         {
-
             if (!this.IsFastDoubleClick())
             {
                 this.position = position;
                 menu = new PopupMenu(this, view);
                 menu.MenuInflater.Inflate(Resource.Menu.runing_menu, menu.Menu);
-                menu.MenuItemClick += PopupMenu_MenuItemClick;
+                menu.MenuItemClick += Menu_MenuItemClick;
                 menu.DismissEvent += Menu_DismissEvent;
                 menu.Show();
             }
         }
         private void Menu_DismissEvent(object sender, PopupMenu.DismissEventArgs e)
         {
-            menu.MenuItemClick -= PopupMenu_MenuItemClick;
+            menu.MenuItemClick -= Menu_MenuItemClick;
             menu.DismissEvent -= Menu_DismissEvent;
             menu.Dispose();
         }
-        private void PopupMenu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
+        private void Menu_MenuItemClick(object sender, PopupMenu.MenuItemClickEventArgs e)
         {
             switch (e.Item.ItemId)
             {
-                case Resource.Id.runing:
+                case Resource.Id.open:
                     {
                         if (!this.IsFastDoubleClick())
                             OpenApp(position);
@@ -112,7 +111,7 @@ namespace KLauncher
                 case Keycode.DpadCenter:
                     {
                         if (!this.IsFastDoubleClick())
-                            OpenApp(AppList.SelectedItemPosition);
+                            OpenApp(position);
                         return true;
                     }
                 case Keycode.SoftRight:
@@ -124,7 +123,15 @@ namespace KLauncher
                 case Keycode.Menu:
                     {
                         if (!this.IsFastDoubleClick())
-                            CleanApp(AppList.SelectedItemPosition);
+                        {
+                            Thread.Sleep(200);
+                            position = AppList.SelectedItemPosition;
+                            menu = new PopupMenu(this, TextViewMenu);
+                            menu.MenuInflater.Inflate(Resource.Menu.runing_menu, menu.Menu);
+                            menu.MenuItemClick += Menu_MenuItemClick;
+                            menu.DismissEvent += Menu_DismissEvent;
+                            menu.Show();
+                        }
                         return true;
                     }
             }
