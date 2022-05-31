@@ -2,7 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.1" package="com.michael.klauncher" android:installLocation="internalOnly">
 	<uses-sdk android:minSdkVersion="25" android:targetSdkVersion="28" />
 	<uses-feature android:name="android.software.device_admin" android:required="true" />
-	<application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme"></application>
+	<application android:allowBackup="true" android:icon="@mipmap/ic_launcher" android:label="@string/app_name" android:supportsRtl="true" android:theme="@style/AppTheme">
+		<provider
+            android:name="rikka.shizuku.ShizukuProvider"
+            android:authorities="${applicationId}.shizuku"
+            android:enabled="true"
+            android:exported="true"
+            android:multiprocess="false"
+            android:permission="android.permission.INTERACT_ACROSS_USERS_FULL" />
+	</application>
 	<uses-permission android:name="android.permission.INTERNET" />
 	<uses-permission android:name="android.permission.DELETE_PACKAGES" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

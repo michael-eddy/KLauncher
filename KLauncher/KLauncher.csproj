@@ -76,10 +76,17 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="Xam.Shizuku.API">
+      <HintPath>libs\Xam.Shizuku.API.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Shizuku.Provider">
+      <HintPath>libs\Xam.Shizuku.Provider.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adapters\AppItemAdapter.cs" />
     <Compile Include="Adapters\ViewHolderBox.cs" />
+    <Compile Include="Tasks\ShizukuCore.cs" />
     <Compile Include="Tasks\CleanerThread.cs" />
     <Compile Include="Tasks\MemoryHandler.cs" />
     <Compile Include="Tasks\MemoryThread.cs" />
@@ -102,7 +109,6 @@
     <AndroidNativeLibrary Include="libs\arm64-v8a\libcleaner.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
-    <None Include="platform.keystore" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
