@@ -49,11 +49,6 @@
     <AndroidSupportedAbis>arm64-v8a</AndroidSupportedAbis>
     <MandroidI18n />
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
-    <AndroidKeyStore>True</AndroidKeyStore>
-    <AndroidSigningKeyStore>platform.keystore</AndroidSigningKeyStore>
-    <AndroidSigningStorePass>michael_eddy</AndroidSigningStorePass>
-    <AndroidSigningKeyAlias>michael_eddy</AndroidSigningKeyAlias>
-    <AndroidSigningKeyPass>michael_eddy</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
