@@ -151,6 +151,7 @@ namespace KLauncher
             {
                 var packageName = Items.ElementAt(index).PackageName;
                 ((ActivityManager)GetSystemService(ActivityService)).KillBackgroundProcesses(packageName);
+                this.KillApp(packageName);
                 Items.RemoveAt(index);
                 Adapter.NotifyDataSetChanged();
                 AppList.SetSelection(0);

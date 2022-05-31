@@ -3,5 +3,6 @@
   <PropertyGroup>
     <SelectedDevice>Android Emulator</SelectedDevice>
     <ActiveDebugProfile>Android Emulator</ActiveDebugProfile>
+    <SelectedPlatformGroup>Emulator</SelectedPlatformGroup>
   </PropertyGroup>
 </Project>

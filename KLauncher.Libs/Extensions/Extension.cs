@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using Android;
 using AndroidX.Core.Content;
 using Exception = System.Exception;
+using Java.Lang.Reflect;
 
 namespace KLauncher.Libs
 {
@@ -115,7 +116,25 @@ namespace KLauncher.Libs
                 context.StartActivity(intent);
                 return true;
             }
-            catch { }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("OpenApp", ex);
+            }
+            return false;
+        }
+        public static bool KillApp(this Context context, string pkgName)
+        {
+            try
+            {
+                var am = (ActivityManager)context.GetSystemService(Context.ActivityService);
+                Method method = Class.ForName("android.app.ActivityManager").GetMethod("forceStopPackage", Class.ForName("java.lang.String"));
+                method.Accessible = true;
+                method.Invoke(am, pkgName);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("KillApp", ex);
+            }
             return false;
         }
         public static int ToInt32(this object token)

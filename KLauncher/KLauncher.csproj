@@ -49,6 +49,11 @@
     <AndroidSupportedAbis>arm64-v8a</AndroidSupportedAbis>
     <MandroidI18n />
     <AndroidEnableMultiDex>true</AndroidEnableMultiDex>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>platform.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>michael_eddy</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>michael_eddy</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>michael_eddy</AndroidSigningKeyPass>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -102,6 +107,7 @@
     <AndroidNativeLibrary Include="libs\arm64-v8a\libcleaner.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
+    <None Include="platform.keystore" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
