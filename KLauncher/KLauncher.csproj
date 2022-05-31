@@ -76,11 +76,17 @@
     <Reference Include="Mono.Android" />
     <Reference Include="System.Numerics" />
     <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="Xam.Shizuku.AIDL">
+      <HintPath>libs\Xam.Shizuku.AIDL.dll</HintPath>
+    </Reference>
     <Reference Include="Xam.Shizuku.API">
       <HintPath>libs\Xam.Shizuku.API.dll</HintPath>
     </Reference>
     <Reference Include="Xam.Shizuku.Provider">
       <HintPath>libs\Xam.Shizuku.Provider.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Shizuku.Shared">
+      <HintPath>libs\Xam.Shizuku.Shared.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
