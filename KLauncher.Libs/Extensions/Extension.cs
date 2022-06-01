@@ -21,6 +21,7 @@ using Android;
 using AndroidX.Core.Content;
 using Exception = System.Exception;
 using Java.Lang.Reflect;
+using System.Text;
 
 namespace KLauncher.Libs
 {
@@ -172,6 +173,7 @@ namespace KLauncher.Libs
                 LogManager.Instance.LogError("LoadImage", ex);
             }
         }
+        public static byte[] GetBytes(this string str) => Encoding.UTF8.GetBytes(str);
         public static void ShowToast(this Context context, Exception exc, ToastLength toastLength)
         {
             string msg = string.Format("发生错误：{0}", exc.Message);
