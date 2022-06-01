@@ -92,8 +92,6 @@
   <ItemGroup>
     <Compile Include="Adapters\AppItemAdapter.cs" />
     <Compile Include="Adapters\ViewHolderBox.cs" />
-    <Compile Include="Shizuku\ShizukuHandler.cs" />
-    <Compile Include="Shizuku\ShizukuInstance.cs" />
     <Compile Include="Tasks\CleanerThread.cs" />
     <Compile Include="Tasks\MemoryHandler.cs" />
     <Compile Include="Tasks\MemoryThread.cs" />
@@ -116,6 +114,7 @@
     <AndroidNativeLibrary Include="libs\arm64-v8a\libcleaner.so">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AndroidNativeLibrary>
+    <ProguardConfiguration Include="proguard_xamarin.cfg" />
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
