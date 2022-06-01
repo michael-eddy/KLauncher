@@ -56,6 +56,7 @@ namespace KLauncher
             AppList.Adapter = Adapter;
             TextViewBack.Click += TextViewBack_Click;
             TextViewMenu.Click += TextViewMenu_Click;
+            RunOnUiThread(CheckShizuku);
         }
         private int position;
         private PopupMenu menu;
@@ -89,7 +90,7 @@ namespace KLauncher
                     }
                 case Resource.Id.end:
                     {
-                        if (!this.IsFastDoubleClick()) 
+                        if (!this.IsFastDoubleClick())
                             CleanApp(position);
                         break;
                     }
@@ -214,7 +215,8 @@ namespace KLauncher
             }
             return AppCenter.Instance.Take(packages);
         }
-        public void OnRequestPermissionResult(int p0, int p1)
+        public void OnRequestPermissionResult(int p0, int p1) => CheckShizuku();
+        private void CheckShizuku()
         {
             try
             {

@@ -243,9 +243,9 @@ namespace KLauncher.Libs
         {
             long time = JavaSystem.CurrentTimeMillis();
             long timeD = time - ClickTime;
-            if (timeD > 1000)
+            if (timeD > 500)
                 ClickTime = time;
-            return timeD <= 1000;
+            return timeD <= 500;
         }
         public static bool IsNotEmpty<T>(this T obj)
         {

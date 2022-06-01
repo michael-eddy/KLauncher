@@ -7,7 +7,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
+#if DEBUG
+[Application(Debuggable = true, UsesCleartextTraffic = true)]
+#else
 [Application(Debuggable = false, UsesCleartextTraffic = true)]
+#endif
 public class XamApplication : Application
 {
     protected PackageReceiver Receiver { get; private set; }
