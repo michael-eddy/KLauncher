@@ -4,28 +4,44 @@ using Android.Content.PM;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
+using Java.Lang;
 using KLauncher.Adapters;
 using KLauncher.Libs;
+using KLauncher.Libs.Extensions;
 using KLauncher.Libs.Models;
+using Rikka.Shizuku;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using Xamarin.Essentials;
+using Exception = System.Exception;
+using Thread = System.Threading.Thread;
 
 namespace KLauncher
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme")]
-    public sealed class RunningActivity : BaseActivity
+    public sealed class RunningActivity : BaseActivity, Shizuku.IOnRequestPermissionResultListener
     {
+        private bool Granted { get; set; }
         public List<AppItem> Items { get; }
         private ListView AppList { get; set; }
+        private bool Running { get; set; } = true;
         private TextView TextViewBack { get; set; }
         private TextView TextViewMenu { get; set; }
         private AppItemAdapter Adapter { get; set; }
         public RunningActivity()
         {
             Items = new List<AppItem>();
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            Shizuku.AddRequestPermissionResultListener(this);
+        }
+        protected override void OnDestroy()
+        {
+            Shizuku.RemoveRequestPermissionResultListener(this);
+            base.OnDestroy();
         }
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -40,6 +56,7 @@ namespace KLauncher
             AppList.Adapter = Adapter;
             TextViewBack.Click += TextViewBack_Click;
             TextViewMenu.Click += TextViewMenu_Click;
+            RunOnUiThread(CheckShizuku);
         }
         private int position;
         private PopupMenu menu;
@@ -151,6 +168,8 @@ namespace KLauncher
             {
                 var packageName = Items.ElementAt(index).PackageName;
                 ((ActivityManager)GetSystemService(ActivityService)).KillBackgroundProcesses(packageName);
+                this.KillApp(packageName);
+                ShizukuExec(string.Format(ShizukuCommand.FORCE_KILL, packageName));
                 Items.RemoveAt(index);
                 Adapter.NotifyDataSetChanged();
                 AppList.SetSelection(0);
@@ -164,6 +183,26 @@ namespace KLauncher
             Adapter.NotifyDataSetChanged();
             AppList.SetSelection(0);
         }
+        public void ShizukuExec(string cmd)
+        {
+            try
+            {
+                if (Granted && Running)
+                {
+#pragma warning disable CS0618
+                    var p = Shizuku.NewProcess(new string[] { "sh" }, null, null);
+                    p.OutputStream.Write((cmd + "\nexit\n").GetBytes());
+                    p.OutputStream.Flush();
+                    p.OutputStream.Close();
+                    p.WaitFor();
+#pragma warning restore CS0618 
+                }
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("ShizukuExec", ex);
+            }
+        }
         private IEnumerable<AppItem> GetRunningList()
         {
             List<string> packages = new List<string>();
@@ -175,6 +214,27 @@ namespace KLauncher
                     packages.Add(localPackageInfo.PackageName.Split(":").FirstOrDefault());
             }
             return AppCenter.Instance.Take(packages);
+        }
+        public void OnRequestPermissionResult(int p0, int p1) => CheckShizuku();
+        private void CheckShizuku()
+        {
+            try
+            {
+                if (Shizuku.CheckSelfPermission() != (int)Permission.Granted)
+                    Shizuku.RequestPermission(0);
+                else
+                    Granted = true;
+            }
+            catch (Exception e)
+            {
+                if (CheckSelfPermission("moe.shizuku.manager.permission.API_V23") == Permission.Granted)
+                    Granted = true;
+                if (e.GetType() == typeof(IllegalStateException))
+                {
+                    Running = false;
+                    this.ShowToast("shizuku未运行", ToastLength.Short);
+                }
+            }
         }
     }
 }

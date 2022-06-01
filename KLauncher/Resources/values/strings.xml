@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">KLauncher</string>
+	<string name="about_conntent">
+		这是一个支持键盘操作的桌面启动器，比如多亲F21 Pro系列带有T9键盘的手机可以使用。
+		\n 功能列表：
+		\n1、查询运行中的程序并可对其进行相应的操作(切换、停止及详细信息查看)
+		\n2、极限占用内存后以实现系统自我清理内存
+		\n3、显示当地当日天气信息
+		\n4、支持隐藏/显示部分应用
+		\n5、支持Shizuku方法进行强制结束应用
+		\n6、方向上键打开信息，方向下键打开通知栏
+	</string>
+	<string name="useandthank">引用&amp;感谢(不分前后)</string>
+	<string name="useandthankDesc">
+		咕灵谷灵咕 (微型启动器多亲版)
+		\n https://github.com/Yuyuko1024/MicroLauncher
+		\n 无敌战神领主 (ShizukuRunner)
+		\n https://github.com/WuDi-ZhanShen/ShizukuRunner
+	</string>
 </resources>
