@@ -89,8 +89,27 @@ namespace KLauncher.Libs
                     }
                     AppUpdate?.Invoke(this);
                 }
+                OrderResult();
                 IsComplete = true;
             });
+        }
+        private void OrderResult()
+        {
+            try
+            {
+                foreach (var app in Apps)
+                {
+                    var fistChar = app.DisplayName.ToCharArray().FirstOrDefault();
+                    app.OrderChar = fistChar > 127 ? fistChar.GetPinyin() : fistChar.ToString();
+                }
+                var items = Apps.OrderBy(x => x.OrderChar).ToList();
+                Apps.Clear();
+                Apps.AddRange(items);
+            }
+            catch (Exception ex)
+            {
+                LogManager.Instance.LogError("OrderResult", ex);
+            }
         }
         private void Remove(string packageName)
         {

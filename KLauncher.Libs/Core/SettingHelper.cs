@@ -89,6 +89,25 @@ namespace KLauncher.Libs.Core
                 SaveData("CleanPercent", value.ToString());
             }
         }
+        public static byte[] Background
+        {
+            get
+            {
+                if (GetData("Background", out string base64String))
+                    return Convert.FromBase64String(base64String);
+                else
+                    return default;
+            }
+            set
+            {
+                try
+                {
+                    var base64String = Convert.ToBase64String(value);
+                    SaveData("Background", base64String);
+                }
+                catch { }
+            }
+        }
         internal static bool GetData(string name, out string value)
         {
             try

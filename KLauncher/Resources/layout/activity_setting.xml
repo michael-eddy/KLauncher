@@ -82,6 +82,25 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/editTextPercent" />
             </LinearLayout>
+            <LinearLayout android:orientation="horizontal" 
+            android:paddingTop="12px" 
+            android:paddingBottom="12px" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:background="@drawable/border_style_bottom">
+                <TextView
+                android:text="设置背景图"
+                android:padding="12px"
+                android:textSize="16px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+                <Button
+                    android:text="选择"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/buttonSelect" />
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
     <LinearLayout

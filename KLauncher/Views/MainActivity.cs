@@ -1,11 +1,14 @@
 ﻿using Android.App;
 using Android.Content;
 using Android.Content.PM;
+using Android.Graphics;
+using Android.Graphics.Drawables;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
 using KLauncher.Libs;
 using KLauncher.Libs.Client;
+using KLauncher.Libs.Core;
 using KLauncher.Libs.Models;
 using KLauncher.Tasks;
 using System;
@@ -34,6 +37,7 @@ namespace KLauncher
         }
         private Thread Thread { get; set; }
         private CleanDialog Dialog { get; set; }
+        private LinearLayout Main { get; set; }
         private TextView TextViewList { get; set; }
         private TextView TextViewClear { get; set; }
         private TextView TextViewWind { get; set; }
@@ -44,6 +48,7 @@ namespace KLauncher
         private void InitControls()
         {
             Dialog = CleanDialog.Instance;
+            Main = FindViewById<LinearLayout>(Resource.Id.main);
             TextViewList = FindViewById<TextView>(Resource.Id.textViewList);
             TextViewClear = FindViewById<TextView>(Resource.Id.textViewClear);
             TextViewTime = FindViewById<TextView>(Resource.Id.textViewTime);
@@ -53,6 +58,17 @@ namespace KLauncher
             TextViewOperator = FindViewById<TextView>(Resource.Id.textViewOperator);
             TextViewList.Click += TextViewList_Click;
             TextViewClear.Click += TextViewClear_Click;
+            RunOnUiThread(LoadBackground);
+        }
+        private void LoadBackground()
+        {
+            var bg = SettingHelper.Background;
+            if (bg != null && bg.Length > 0)
+            {
+                var bmp = BitmapFactory.DecodeByteArray(bg, 0, bg.Length);
+                var drawable = new BitmapDrawable(Resources, bmp);
+                Main.Background = drawable;
+            }
         }
         private void TextViewClear_Click(object sender, EventArgs e)
         {

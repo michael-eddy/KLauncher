@@ -9,6 +9,7 @@ namespace KLauncher.Libs.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
         public string Icon { get; set; }
+        public string OrderChar { get; set; }
         public string DisplayName { get; set; }
         public string PackageName { get; set; }
         public long VersionCode { get; set; }
