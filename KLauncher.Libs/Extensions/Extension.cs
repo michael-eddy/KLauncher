@@ -22,6 +22,8 @@ using AndroidX.Core.Content;
 using Exception = System.Exception;
 using Java.Lang.Reflect;
 using System.Text;
+using Microsoft.International.Converters.PinYinConverter;
+using System.Linq;
 
 namespace KLauncher.Libs
 {
@@ -35,6 +37,12 @@ namespace KLauncher.Libs
                 permissions.Add(Manifest.Permission.ReadPhoneState);
             if (permissions.Count > 0)
                 activity.RequestPermissions(permissions.ToArray(), 1);
+        }
+        public static string GetPinyin(this char c)
+        {
+            ChineseChar cc = new ChineseChar(c);
+            string str = cc.Pinyins[0];
+            return str.FirstOrDefault().ToString();
         }
         public static JObject ParseJObject(this string json)
         {
