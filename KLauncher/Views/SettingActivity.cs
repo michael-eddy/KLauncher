@@ -7,13 +7,15 @@ using Android.Widget;
 using Java.IO;
 using KLauncher.Libs;
 using KLauncher.Libs.Core;
+using KLauncher.Libs.Extensions;
 using System;
 using Xamarin.Essentials;
+using Exception = System.Exception;
 
 namespace KLauncher
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme")]
-    public sealed class SettingActivity : BaseActivity
+    public sealed class SettingActivity : ShizukuActivity
     {
         private bool FirstLoad = true;
         private Switch ShowSecSwitch { get; set; }
@@ -22,25 +24,31 @@ namespace KLauncher
         private TextView TextViewBack { get; set; }
         private EditText EditTextThread { get; set; }
         private EditText EditTextPercent { get; set; }
+        private TextView TextShziukuStatus { get; set; }
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_setting);
-           var  buttonSelect = FindViewById<Button>(Resource.Id.buttonSelect);
+            var buttonSelect = FindViewById<Button>(Resource.Id.buttonSelect);
             TextViewSave = FindViewById<TextView>(Resource.Id.textViewSave);
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             ShowSecSwitch = FindViewById<Switch>(Resource.Id.showSecSwitch);
             HideAppSwitch = FindViewById<Switch>(Resource.Id.hideAppSwitch);
             EditTextThread = FindViewById<EditText>(Resource.Id.editTextThraed);
             EditTextPercent = FindViewById<EditText>(Resource.Id.editTextPercent);
+            TextShziukuStatus = FindViewById<TextView>(Resource.Id.textShziukuStatus);
             buttonSelect.Click += ButtonSelect_Click;
             TextViewSave.Click += TextViewSave_Click;
             TextViewBack.Click += TextViewBack_Click;
+            TextShziukuStatus.Click += TextShziukuStatus_Click;
             HideAppSwitch.CheckedChange += HideAppSwitch_CheckedChange;
             ShowSecSwitch.CheckedChange += ShowSecSwitch_CheckedChange;
             RunOnUiThread(() =>
             {
+                CheckShizuku();
+                TextShziukuStatus.Text = Granted ? "已授权" : "未授权";
+                PermissionCallback += SettingActivity_PermissionCallback;
                 ShowSecSwitch.Checked = SettingHelper.ShowSec;
                 HideAppSwitch.Checked = SettingHelper.ShowHidden;
                 EditTextThread.Text = SettingHelper.CleanThread.ToString();
@@ -48,6 +56,8 @@ namespace KLauncher
                 FirstLoad = false;
             });
         }
+        private void TextShziukuStatus_Click(object sender, EventArgs e) => RequestPermission();
+        private void SettingActivity_PermissionCallback(object sender) => TextShziukuStatus.Text = Granted ? "已授权" : "未授权";
         private void ButtonSelect_Click(object sender, EventArgs e)
         {
             Intent intent = new Intent(Intent.ActionPick, null);

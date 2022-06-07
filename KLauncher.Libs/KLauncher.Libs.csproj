@@ -49,6 +49,18 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
+    <Reference Include="Xam.Shizuku.AIDL">
+      <HintPath>..\KLauncher\libs\Xam.Shizuku.AIDL.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Shizuku.API">
+      <HintPath>..\KLauncher\libs\Xam.Shizuku.API.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Shizuku.Provider">
+      <HintPath>..\KLauncher\libs\Xam.Shizuku.Provider.dll</HintPath>
+    </Reference>
+    <Reference Include="Xam.Shizuku.Shared">
+      <HintPath>..\KLauncher\libs\Xam.Shizuku.Shared.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\AppCenter.cs" />
@@ -64,6 +76,7 @@
     <Compile Include="Extensions\Extension.cs" />
     <Compile Include="Extensions\LogManager.cs" />
     <Compile Include="Extensions\PackageReceiver.cs" />
+    <Compile Include="Extensions\ShizukuActivity.cs" />
     <Compile Include="Extensions\ShizukuCommand.cs" />
     <Compile Include="Models\AppItem.cs" />
     <Compile Include="Models\CacheWeatherInfo.cs" />
