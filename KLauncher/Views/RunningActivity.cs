@@ -37,11 +37,17 @@ namespace KLauncher
             TextViewBack = FindViewById<TextView>(Resource.Id.textViewBack);
             TextViewMenu = FindViewById<TextView>(Resource.Id.textViewMenu);
             Adapter = new AppItemAdapter(this, Items);
+            Adapter.ItemClick += Adapter_ItemClick;
             Adapter.ItemLongClick += Adapter_ItemLongClick;
             AppList.Adapter = Adapter;
             TextViewBack.Click += TextViewBack_Click;
             TextViewMenu.Click += TextViewMenu_Click;
             RunOnUiThread(CheckShizuku);
+        }
+        private void Adapter_ItemClick(object sender)
+        {
+            var position = sender.ToInt32();
+            OpenApp(position);
         }
         private int position;
         private PopupMenu menu;
