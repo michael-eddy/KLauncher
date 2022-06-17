@@ -89,6 +89,29 @@
             android:layout_height="wrap_content" 
             android:background="@drawable/border_style_bottom">
                 <TextView
+                android:text="Shizuku权限状态"
+                android:padding="12px"
+                android:textSize="16px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/black" />
+                <TextView
+                    android:text="未授权"
+                    android:padding="12px"
+                    android:textSize="16px"
+                    android:gravity="right"
+                    android:id="@+id/textShziukuStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+            <LinearLayout android:orientation="horizontal" 
+            android:paddingTop="12px" 
+            android:paddingBottom="12px" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" 
+            android:background="@drawable/border_style_bottom">
+                <TextView
                 android:text="设置背景图"
                 android:padding="12px"
                 android:textSize="16px"

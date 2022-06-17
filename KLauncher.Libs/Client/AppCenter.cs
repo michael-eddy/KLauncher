@@ -179,7 +179,10 @@ namespace KLauncher.Libs
                                 };
                                 var appItem = Apps.FirstOrDefault(x => x.PackageName == packageName);
                                 if (appItem == null)
+                                {
                                     Apps.Add(app);
+                                    OrderResult();
+                                }
                                 else
                                 {
                                     appItem.Icon = app.Icon;

@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using KLauncher.Libs.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace KLauncher.Libs
 {
@@ -13,7 +14,10 @@ namespace KLauncher.Libs
 				string packageName = intent.DataString.Replace("package:", "");
 				var updateType = intent.Action.Equals("android.intent.action.PACKAGE_ADDED", StringComparison.CurrentCultureIgnoreCase)
 					? UpdateType.Add : UpdateType.Remove;
-				AppCenter.Instance.UpdateOne(packageName, updateType);
+				Task.Factory.StartNew(() =>
+				{
+					AppCenter.Instance.UpdateOne(packageName, updateType);
+				});
 			}
 			catch (Exception ex)
 			{
