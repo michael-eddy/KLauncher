@@ -133,7 +133,8 @@ namespace KLauncher.Libs
         {
             try
             {
-                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName == app.PackageName);
+                var appItem = DB.Connection.Table<AppItem>().FirstOrDefault(x => x.PackageName.Equals(
+                    app.PackageName, StringComparison.CurrentCultureIgnoreCase));
                 if (appItem != null)
                 {
                     appItem.Icon = app.Icon;
@@ -177,7 +178,7 @@ namespace KLauncher.Libs
                                     IsSystem = packageInfo.ApplicationInfo.IsSystem(),
                                     DisplayName = packageInfo.ApplicationInfo.LoadLabel(Context.PackageManager)
                                 };
-                                var appItem = Apps.FirstOrDefault(x => x.PackageName == packageName);
+                                var appItem = Apps.FirstOrDefault(x => x.PackageName.Equals(packageName, StringComparison.CurrentCultureIgnoreCase));
                                 if (appItem == null)
                                 {
                                     Apps.Add(app);
